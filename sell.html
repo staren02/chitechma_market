@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Chitechma &mdash; Sell an Item</title><link rel="stylesheet" href="css/style.css"></head>
+<body>
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <img src="images/logo.png" alt="Chitechma Logo">
+    <div><div class="logo-name">Chitechma University</div><div class="logo-sub">Student Marketplace &middot; Buea</div></div>
+  </a>
+  <nav class="topbar-nav">
+    <a href="index.html" id="nl-home">Home</a>
+    <a href="products.html" id="nl-products">Products</a>
+    <a href="sell.html" id="nl-sell">Sell Item</a>
+    <a href="dashboard.html" id="nl-dashboard">Dashboard</a>
+    <a href="about.html" id="nl-about">About</a>
+    <a href="contact.html" id="nl-contact">Contact</a>
+  </nav>
+  <div id="nav-user-desktop"></div>
+  <button class="nav-toggle" onclick="toggleMobileNav()">&#9776;</button>
+</header>
+<div class="nav-overlay" id="nav-overlay" onclick="closeMobileNav()"></div>
+<div class="mobile-nav-panel" id="mobile-nav-panel">
+  <div class="mnp-head">
+    <span class="brand">&#127891; Menu</span>
+    <button class="mnp-close" onclick="closeMobileNav()">&#10005;</button>
+  </div>
+  <div class="mnp-links">
+    <a href="index.html" id="ml-home">&#127968; Home</a>
+    <a href="products.html" id="ml-products">&#128717; Products</a>
+    <a href="sell.html" id="ml-sell">&#128230; Sell Item</a>
+    <a href="dashboard.html" id="ml-dashboard">&#128203; Dashboard</a>
+    <a href="about.html" id="ml-about">&#8505; About</a>
+    <a href="contact.html" id="ml-contact">&#128222; Contact</a>
+  </div>
+  <div id="nav-user-mobile"></div>
+</div>
+<script>(function(){var p=window.location.pathname.split("/").pop()||"index.html";var map={"index.html":"home","products.html":"products","sell.html":"sell","dashboard.html":"dashboard","about.html":"about","contact.html":"contact","admin.html":"dashboard"};var key=map[p]||"home";var d=document.getElementById("nl-"+key);if(d)d.classList.add("active");var m=document.getElementById("ml-"+key);if(m)m.classList.add("active");})();</script>
+<div class="page-wrap">
+  <h1 class="page-title">List an Item for Sale</h1>
+  <div id="alert-box"></div>
+  <div id="page-body">
+    <div class="sell-layout">
+      <div class="sell-main">
+        <div class="card">
+          <div class="card-title">Product Details</div>
+          <div class="form-group"><label>Product Name *</label><input class="form-control" type="text" id="pname" placeholder="e.g. Nike Running Shoes, HP Laptop 15&quot;"></div>
+          <div class="form-row">
+            <div class="form-group"><label>Category *</label>
+              <select class="form-control" id="pcat">
+                <option value="">Select category</option>
+                <option value="clothing">Clothing &amp; Accessories</option>
+                <option value="electronics">Electronics</option>
+                <option value="books">Books &amp; Study Materials</option>
+                <option value="furniture">Furniture</option>
+                <option value="sports">Sports &amp; Equipment</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Condition *</label>
+              <select class="form-control" id="pcond">
+                <option value="">Select condition</option>
+                <option value="new">Brand New</option>
+                <option value="like-new">Like New</option>
+                <option value="very-good">Very Good</option>
+                <option value="good">Good</option>
+                <option value="fair">Fair</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group"><label>Price (FCFA) *</label><input class="form-control" type="number" id="pprice" placeholder="e.g. 5000" min="0"></div>
+          <div class="form-group"><label>Description *</label><textarea class="form-control" id="pdesc" placeholder="Describe your item — colour, size, age, what is included, reason for selling..."></textarea></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Your Contact Details</div>
+          <div class="form-row">
+            <div class="form-group"><label>Your Full Name *</label><input class="form-control" type="text" id="sname" placeholder="Jean Mballa"></div>
+            <div class="form-group"><label>Phone / WhatsApp *</label><input class="form-control" type="tel" id="sphone" placeholder="677 123 456"></div>
+          </div>
+          <div class="form-group"><label>Email Address (optional)</label><input class="form-control" type="email" id="semail" placeholder="student@chitechma.cm"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Product Photo</div>
+          <div class="upload-area" id="upload-area" onclick="document.getElementById('pimg').click()">
+            <div id="img-preview"><div style="font-size:36px;margin-bottom:8px;">&#128247;</div><p>Click to upload a product photo</p><p style="font-size:12px;color:var(--text-3);margin-top:4px;">JPG or PNG &middot; Max 1.5 MB</p></div>
+          </div>
+          <input type="file" id="pimg" accept="image/*" style="display:none" onchange="previewImg(this)">
+        </div>
+        <button class="btn btn-primary btn-block" style="padding:14px;" onclick="submitProduct()">&#128640; Publish Listing</button>
+      </div>
+      <div class="sell-side">
+        <div class="info-block">
+          <h2>Tips for a great listing</h2>
+          <ul>
+            <li>Use a clear, specific product name</li>
+            <li>Set a fair and realistic price</li>
+            <li>Be honest about the condition</li>
+            <li>Write a detailed description</li>
+            <li>Add a clear photo — it sells faster</li>
+            <li>Use a number buyers can reach</li>
+          </ul>
+        </div>
+        <div class="info-block">
+          <h2>Rules</h2>
+          <ul>
+            <li>Only Chitechma students can sell</li>
+            <li>No stolen or illegal items</li>
+            <li>You must be reachable by buyers</li>
+            <li>Prices must be in FCFA</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer><p class="footer-brand">Chitechma University Institute</p><p>Student Marketplace &mdash; Buea, Cameroon</p><p style="margin-top:8px;"><a href="about.html">About</a> &nbsp;&bull;&nbsp; <a href="contact.html">Contact</a></p></footer>
+<script src="js/app.js"></script>
+<script>
+var imgB64 = null;
+document.addEventListener('DOMContentLoaded', function() {
+  if (!Auth.isLoggedIn()) {
+    document.getElementById('page-body').innerHTML = '<div class="empty" style="padding:80px 20px;">'
+      + '<div class="empty-icon">&#128274;</div>'
+      + '<p style="font-size:18px;font-weight:700;color:var(--text-1);margin-bottom:8px;">Login Required</p>'
+      + '<p style="color:var(--text-2);margin-bottom:24px;">You must be logged in to list an item for sale.</p>'
+      + '<a href="login.html" class="btn btn-primary" style="margin-right:10px;">Login</a>'
+      + '<a href="register.html" class="btn btn-ghost">Create Account</a></div>';
+    return;
+  }
+  var u = Auth.getUser(), fu = DB.getUserById(u.id);
+  document.getElementById('sname').value  = u.name  || '';
+  document.getElementById('semail').value = u.email || '';
+  if (fu && fu.phone) document.getElementById('sphone').value = fu.phone;
+});
+function previewImg(inp) {
+  var f = inp.files[0]; if (!f) return;
+  readImage(f, function(b64) {
+    if (!b64) return; imgB64 = b64;
+    document.getElementById('img-preview').innerHTML = '<img src="' + b64 + '" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;">';
+  });
+}
+function submitProduct() {
+  var name  = document.getElementById('pname').value.trim();
+  var cat   = document.getElementById('pcat').value;
+  var cond  = document.getElementById('pcond').value;
+  var price = document.getElementById('pprice').value.trim();
+  var desc  = document.getElementById('pdesc').value.trim();
+  var sname = document.getElementById('sname').value.trim();
+  var sph   = document.getElementById('sphone').value.trim();
+  var sem   = document.getElementById('semail').value.trim();
+  if (!name||!cat||!cond||!price||!desc||!sname||!sph) { showAlert('Please fill in all required fields (*).','error'); return; }
+  if (isNaN(price)||parseInt(price)<0) { showAlert('Please enter a valid price.','error'); return; }
+  var u = Auth.getUser();
+  DB.addProduct({ id:uid(), name:name, category:cat, condition:cond, price:parseInt(price), description:desc,
+    sellerName:sname, sellerPhone:sph, sellerEmail:sem, sellerId:u?u.id:0,
+    image:imgB64, emoji:CAT_EMOJI[cat]||'&#128230;', color:CAT_COLOR[cat]||'#33A344',
+    date:new Date().toISOString(), approved:true });
+  showAlert('Your listing is live! Redirecting...','success');
+  setTimeout(function(){ window.location.href='products.html'; }, 1600);
+}
+</script>
+</body></html>

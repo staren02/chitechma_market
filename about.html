@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Chitechma &mdash; About</title><link rel="stylesheet" href="css/style.css"></head>
+<body>
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <img src="images/logo.png" alt="Chitechma Logo">
+    <div><div class="logo-name">Chitechma University</div><div class="logo-sub">Student Marketplace &middot; Buea</div></div>
+  </a>
+  <nav class="topbar-nav">
+    <a href="index.html" id="nl-home">Home</a>
+    <a href="products.html" id="nl-products">Products</a>
+    <a href="sell.html" id="nl-sell">Sell Item</a>
+    <a href="dashboard.html" id="nl-dashboard">Dashboard</a>
+    <a href="about.html" id="nl-about">About</a>
+    <a href="contact.html" id="nl-contact">Contact</a>
+  </nav>
+  <div id="nav-user-desktop"></div>
+  <button class="nav-toggle" onclick="toggleMobileNav()">&#9776;</button>
+</header>
+<div class="nav-overlay" id="nav-overlay" onclick="closeMobileNav()"></div>
+<div class="mobile-nav-panel" id="mobile-nav-panel">
+  <div class="mnp-head">
+    <span class="brand">&#127891; Menu</span>
+    <button class="mnp-close" onclick="closeMobileNav()">&#10005;</button>
+  </div>
+  <div class="mnp-links">
+    <a href="index.html" id="ml-home">&#127968; Home</a>
+    <a href="products.html" id="ml-products">&#128717; Products</a>
+    <a href="sell.html" id="ml-sell">&#128230; Sell Item</a>
+    <a href="dashboard.html" id="ml-dashboard">&#128203; Dashboard</a>
+    <a href="about.html" id="ml-about">&#8505; About</a>
+    <a href="contact.html" id="ml-contact">&#128222; Contact</a>
+  </div>
+  <div id="nav-user-mobile"></div>
+</div>
+<script>(function(){var p=window.location.pathname.split("/").pop()||"index.html";var map={"index.html":"home","products.html":"products","sell.html":"sell","dashboard.html":"dashboard","about.html":"about","contact.html":"contact","admin.html":"dashboard"};var key=map[p]||"home";var d=document.getElementById("nl-"+key);if(d)d.classList.add("active");var m=document.getElementById("ml-"+key);if(m)m.classList.add("active");})();</script>
+<div class="page-wrap">
+  <h1 class="page-title">About This Project</h1>
+  <div class="info-block">
+    <h2>What is the Chitechma Student Marketplace?</h2>
+    <p>The <strong>Chitechma Student Marketplace</strong> is a web platform for students of <strong>Chitechma University Institute, Buea</strong> to buy and sell items within the school community. Students can register, list products with photos, browse listings and contact sellers directly — all without leaving campus.</p>
+  </div>
+  <div class="info-block">
+    <h2>The Problem We Are Solving</h2>
+    <p>Chitechma students often struggle to buy or sell used items. Common problems include:</p>
+    <ul>
+      <li>No organised place to advertise items on campus</li>
+      <li>Relying on disorganised WhatsApp groups</li>
+      <li>Difficulty finding affordable items from trusted fellow students</li>
+      <li>Items going to waste when they could be reused</li>
+    </ul>
+  </div>
+  <div class="info-block">
+    <h2>Benefits to Students</h2>
+    <div class="benefit-row"><div class="benefit-icon">&#128176;</div><div><strong>Save Money</strong><span>Buy second-hand items from students at affordable prices.</span></div></div>
+    <div class="benefit-row"><div class="benefit-icon">&#128230;</div><div><strong>Sell Easily</strong><span>List items you no longer need and earn money quickly.</span></div></div>
+    <div class="benefit-row"><div class="benefit-icon">&#129309;</div><div><strong>Trusted Community</strong><span>Deal directly with fellow Chitechma students you already know.</span></div></div>
+    <div class="benefit-row"><div class="benefit-icon">&#128218;</div><div><strong>Access Textbooks</strong><span>Find affordable textbooks from students who finished the course.</span></div></div>
+    <div class="benefit-row"><div class="benefit-icon">&#9851;</div><div><strong>Reduce Waste</strong><span>Give useful items a second life rather than throwing them away.</span></div></div>
+  </div>
+  <div class="info-block">
+    <h2>Technologies Used</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
+      <span class="badge badge-green" style="font-size:13px;padding:6px 14px;">HTML5</span>
+      <span class="badge badge-green" style="font-size:13px;padding:6px 14px;">CSS3</span>
+      <span class="badge badge-green" style="font-size:13px;padding:6px 14px;">JavaScript (ES6)</span>
+      <span class="badge badge-green" style="font-size:13px;padding:6px 14px;">localStorage API</span>
+      <span class="badge badge-green" style="font-size:13px;padding:6px 14px;">FileReader API</span>
+    </div>
+    <p style="margin-top:14px;font-size:13px;color:var(--text-3);">This is a front-end prototype. A future version would use a PHP + MySQL backend for real persistent storage.</p>
+  </div>
+  <div class="info-block">
+    <h2>Future Improvements</h2>
+    <ul>
+      <li>Real backend with PHP and MySQL database</li>
+      <li>Real-time chat between buyers and sellers</li>
+      <li>Email and SMS notifications</li>
+      <li>MTN Mobile Money / Orange Money integration</li>
+      <li>Native Android &amp; iOS mobile apps</li>
+      <li>Admin moderation and product approval flow</li>
+    </ul>
+  </div>
+</div>
+<footer><p class="footer-brand">Chitechma University Institute</p><p>Student Marketplace &mdash; Buea, Cameroon</p><p style="margin-top:8px;"><a href="about.html">About</a> &nbsp;&bull;&nbsp; <a href="contact.html">Contact</a></p></footer>
+<script src="js/app.js"></script>
+</body></html>

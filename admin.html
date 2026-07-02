@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Chitechma &mdash; Admin</title><link rel="stylesheet" href="css/style.css"></head>
+<body>
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <img src="images/logo.png" alt="Chitechma Logo">
+    <div><div class="logo-name">Chitechma University</div><div class="logo-sub">Student Marketplace &middot; Buea</div></div>
+  </a>
+  <nav class="topbar-nav">
+    <a href="index.html" id="nl-home">Home</a>
+    <a href="products.html" id="nl-products">Products</a>
+    <a href="sell.html" id="nl-sell">Sell Item</a>
+    <a href="dashboard.html" id="nl-dashboard">Dashboard</a>
+    <a href="about.html" id="nl-about">About</a>
+    <a href="contact.html" id="nl-contact">Contact</a>
+  </nav>
+  <div id="nav-user-desktop"></div>
+  <button class="nav-toggle" onclick="toggleMobileNav()">&#9776;</button>
+</header>
+<div class="nav-overlay" id="nav-overlay" onclick="closeMobileNav()"></div>
+<div class="mobile-nav-panel" id="mobile-nav-panel">
+  <div class="mnp-head">
+    <span class="brand">&#127891; Menu</span>
+    <button class="mnp-close" onclick="closeMobileNav()">&#10005;</button>
+  </div>
+  <div class="mnp-links">
+    <a href="index.html" id="ml-home">&#127968; Home</a>
+    <a href="products.html" id="ml-products">&#128717; Products</a>
+    <a href="sell.html" id="ml-sell">&#128230; Sell Item</a>
+    <a href="dashboard.html" id="ml-dashboard">&#128203; Dashboard</a>
+    <a href="about.html" id="ml-about">&#8505; About</a>
+    <a href="contact.html" id="ml-contact">&#128222; Contact</a>
+  </div>
+  <div id="nav-user-mobile"></div>
+</div>
+<script>(function(){var p=window.location.pathname.split("/").pop()||"index.html";var map={"index.html":"home","products.html":"products","sell.html":"sell","dashboard.html":"dashboard","about.html":"about","contact.html":"contact","admin.html":"dashboard"};var key=map[p]||"home";var d=document.getElementById("nl-"+key);if(d)d.classList.add("active");var m=document.getElementById("ml-"+key);if(m)m.classList.add("active");})();</script>
+<div class="page-wrap">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px;">
+    <h1 class="page-title" style="margin:0;border:none;padding:0;">&#128737; Admin Dashboard</h1>
+    <span id="admin-id" style="font-size:13px;color:var(--text-3);"></span>
+  </div>
+  <div id="alert-box"></div>
+  <div class="admin-stat-row" id="kpis"></div>
+  <div class="admin-tabs">
+    <div class="admin-tab active" onclick="tab('products')">&#128230; Products</div>
+    <div class="admin-tab" onclick="tab('users')">&#128101; Users</div>
+    <div class="admin-tab" onclick="tab('team')">&#129309; Team</div>
+    <div class="admin-tab" onclick="tab('msgs')">&#128236; Messages</div>
+    <div class="admin-tab" onclick="tab('profile')">&#128100; My Profile</div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div id="pane-products" class="tab-pane active">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+      <strong style="color:var(--text-1);">All Listings</strong>
+      <input class="form-control" style="max-width:240px;" type="text" id="psearch" placeholder="Search..." oninput="renderProducts()">
+    </div>
+    <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Photo</th><th>Name</th><th>Category</th><th>Price</th><th>Seller</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="ptbody"></tbody></table></div>
+  </div>
+
+  <!-- USERS -->
+  <div id="pane-users" class="tab-pane">
+    <strong style="color:var(--text-1);display:block;margin-bottom:16px;">Registered Users</strong>
+    <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Name</th><th>Email</th><th>Matricule</th><th>Phone</th><th>Role</th><th>Joined</th><th>Action</th></tr></thead><tbody id="utbody"></tbody></table></div>
+  </div>
+
+  <!-- TEAM -->
+  <div id="pane-team" class="tab-pane">
+    <div class="inline-form" id="team-form">
+      <h3 id="tform-title">&#10133; Add Team Member</h3>
+      <input type="hidden" id="t-eid">
+      <div class="form-row">
+        <div class="form-group"><label>Full Name *</label><input class="form-control" type="text" id="t-name" placeholder="e.g. Jean Mballa"></div>
+        <div class="form-group"><label>Role *</label><input class="form-control" type="text" id="t-role" placeholder="e.g. Products Page"></div>
+      </div>
+      <div class="form-group">
+        <label>Profile Photo</label>
+        <div class="upload-area" style="max-width:180px;padding:14px;" onclick="document.getElementById('t-photo').click()">
+          <div id="t-photo-prev"><div style="font-size:28px;">&#128247;</div><p>Click to upload</p></div>
+        </div>
+        <input type="file" id="t-photo" accept="image/*" style="display:none;" onchange="prevTeamPhoto(this)">
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" onclick="saveTeam()">&#128190; Save</button>
+        <button class="btn btn-ghost btn-sm" onclick="cancelTeam()">&#10006; Cancel</button>
+      </div>
+    </div>
+    <div id="team-table"></div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div id="pane-msgs" class="tab-pane">
+    <strong style="color:var(--text-1);display:block;margin-bottom:16px;">All Messages</strong>
+    <div id="msgs-list"></div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="pane-profile" class="tab-pane">
+    <div class="two-col">
+      <div class="col-main">
+        <div class="card">
+          <div class="card-title">&#128444; Profile Photo</div>
+          <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:16px;">
+            <div id="ap-display" class="user-avatar" style="width:80px;height:80px;font-size:28px;flex-shrink:0;"></div>
+            <div>
+              <p style="font-size:13px;color:var(--text-2);margin-bottom:10px;">Upload a new profile photo</p>
+              <div class="upload-area" style="max-width:200px;padding:12px;" onclick="document.getElementById('ap-file').click()">
+                <p style="font-size:13px;">&#128247; Choose photo</p><p style="font-size:11px;color:var(--text-3);">JPG or PNG &middot; Max 1.5MB</p>
+              </div>
+              <input type="file" id="ap-file" accept="image/*" style="display:none;" onchange="uploadAdminPhoto(this)">
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">&#9999; Update Information</div>
+          <div class="form-group"><label>Full Name</label><input class="form-control" type="text" id="ap-name"></div>
+          <div class="form-group"><label>Phone</label><input class="form-control" type="tel" id="ap-phone"></div>
+          <button class="btn btn-primary btn-sm" onclick="saveAdminInfo()">Save Changes</button>
+        </div>
+        <div class="card">
+          <div class="card-title">&#128274; Change Password</div>
+          <div class="form-group"><label>Current Password</label><input class="form-control" type="password" id="cp-cur"></div>
+          <div class="form-group"><label>New Password</label><input class="form-control" type="password" id="cp-new"></div>
+          <div class="form-group"><label>Confirm New</label><input class="form-control" type="password" id="cp-con"></div>
+          <button class="btn btn-primary btn-sm" onclick="changePW()">Update Password</button>
+        </div>
+      </div>
+      <div class="col-side">
+        <div class="card"><div class="card-title">Account Info</div><div id="ap-info"></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<footer><p class="footer-brand">Chitechma University Institute</p><p>Student Marketplace &mdash; Buea, Cameroon</p><p style="margin-top:8px;"><a href="about.html">About</a> &nbsp;&bull;&nbsp; <a href="contact.html">Contact</a></p></footer>
+<script src="js/app.js"></script>
+<script>
+var tPhotoB64 = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (!Auth.requireAdmin()) return;
+  var u = Auth.getUser();
+  document.getElementById('admin-id').textContent = 'Logged in as ' + u.name;
+  renderKPIs(); renderProducts(); renderUsers(); renderTeam(); renderMsgs(); renderProfile();
+});
+
+function tab(name) {
+  document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.admin-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById('pane-' + name).classList.add('active');
+  var idx = {products:0,users:1,team:2,msgs:3,profile:4}[name];
+  document.querySelectorAll('.admin-tab')[idx].classList.add('active');
+}
+
+function renderKPIs() {
+  var kpis = document.getElementById('kpis');
+  kpis.innerHTML = [
+    [DB.getProducts().length, 'Total Listings'],
+    [DB.getUsers().length,    'Registered Users'],
+    [DB.getTeam().length,     'Team Members'],
+    [DB.getMessages().length, 'Total Messages']
+  ].map(function(k){ return '<div class="admin-kpi"><div class="kn">'+k[0]+'</div><div class="kl">'+k[1]+'</div></div>'; }).join('');
+}
+
+function renderProducts() {
+  var q = (document.getElementById('psearch').value || '').toLowerCase();
+  var list = DB.getProducts().filter(function(p){ return !q || p.name.toLowerCase().includes(q) || p.sellerName.toLowerCase().includes(q); });
+  var tb = document.getElementById('ptbody');
+  if (!list.length) { tb.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-3);">No products found.</td></tr>'; return; }
+  tb.innerHTML = list.map(function(p) {
+    var img = p.image ? '<img src="' + p.image + '" alt="">' : '<div style="width:40px;height:40px;background:' + (p.color||'#33A344') + ';border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;">' + (p.emoji||'&#128230;') + '</div>';
+    var st  = p.approved !== false ? '<span class="badge badge-green">Live</span>' : '<span class="badge badge-yellow">Hidden</span>';
+    return '<tr><td>' + img + '</td><td style="font-weight:600;max-width:160px;">' + escHtml(p.name) + '</td><td>' + escHtml(p.category) + '</td><td style="color:var(--green);font-weight:700;">' + formatPrice(p.price) + '</td><td>' + escHtml(p.sellerName) + '</td><td>' + formatDate(p.date) + '</td><td>' + st + '</td><td style="white-space:nowrap;"><button class="btn btn-ghost btn-sm" style="margin-right:4px;" onclick="toggleP(' + p.id + ')">' + (p.approved!==false?'Hide':'Show') + '</button><button class="btn btn-danger btn-sm" onclick="deleteP(' + p.id + ')">&#128465;</button></td></tr>';
+  }).join('');
+}
+
+function toggleP(id) { var p = DB.getProductById(id); if(p) DB.updateProduct(id, {approved: p.approved===false}); renderProducts(); renderKPIs(); }
+function deleteP(id) { if (!confirm('Delete this product?')) return; DB.deleteProduct(id); renderProducts(); renderKPIs(); showAlert('Product deleted.','success'); }
+
+function renderUsers() {
+  var tb = document.getElementById('utbody');
+  tb.innerHTML = DB.getUsers().map(function(u) {
+    var role = u.role==='admin' ? '<span class="badge badge-blue">Admin</span>' : '<span class="badge badge-green">Student</span>';
+    var act  = u.role!=='admin' ? '<button class="btn btn-danger btn-sm" onclick="deleteU(' + u.id + ')">&#128465;</button>' : '<span style="font-size:12px;color:var(--text-3);">Protected</span>';
+    return '<tr><td style="font-weight:600;">' + escHtml(u.name) + '</td><td>' + escHtml(u.email) + '</td><td>' + escHtml(u.matricule||'&mdash;') + '</td><td>' + escHtml(u.phone||'&mdash;') + '</td><td>' + role + '</td><td>' + formatDate(u.joinDate) + '</td><td>' + act + '</td></tr>';
+  }).join('');
+}
+function deleteU(id) { if (!confirm('Delete this user and their listings?')) return; DB.deleteUser(id); renderUsers(); renderProducts(); renderKPIs(); showAlert('User deleted.','success'); }
+
+function renderTeam() {
+  var team = DB.getTeam();
+  var el   = document.getElementById('team-table');
+  if (!team.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">&#128101;</div><p>No team members yet. Add one above.</p></div>'; return; }
+  el.innerHTML = '<div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Photo</th><th>Name</th><th>Role</th><th>Actions</th></tr></thead><tbody>'
+    + team.map(function(m) {
+        var av = m.photo ? '<img src="' + m.photo + '" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">' : '<div class="user-avatar" style="width:40px;height:40px;">' + escHtml(m.name.charAt(0)) + '</div>';
+        return '<tr><td>' + av + '</td><td style="font-weight:600;">' + escHtml(m.name) + '</td><td>' + escHtml(m.role) + '</td><td style="white-space:nowrap;"><button class="btn btn-ghost btn-sm" style="margin-right:4px;" onclick="editTeam(' + m.id + ')">&#9998; Edit</button><button class="btn btn-danger btn-sm" onclick="rmTeam(' + m.id + ')">&#128465;</button></td></tr>';
+      }).join('')
+    + '</tbody></table></div>';
+}
+function saveTeam() {
+  var name=document.getElementById('t-name').value.trim(), role=document.getElementById('t-role').value.trim(), eid=parseInt(document.getElementById('t-eid').value)||0;
+  if (!name||!role) { showAlert('Please fill in name and role.','error'); return; }
+  if (eid) { DB.updateTeamMember(eid, {name:name, role:role, photo: tPhotoB64!==null ? tPhotoB64 : DB.getTeam().find(function(m){return m.id===eid;})||{photo:null}).photo}); showAlert('Member updated.','success'); }
+  else { DB.addTeamMember({id:uid(), name:name, role:role, photo:tPhotoB64}); showAlert('Member added.','success'); }
+  cancelTeam(); renderTeam(); renderKPIs();
+}
+function editTeam(id) {
+  var m = DB.getTeam().find(function(x){return x.id===id;});
+  if (!m) return;
+  document.getElementById('t-eid').value  = m.id;
+  document.getElementById('t-name').value = m.name;
+  document.getElementById('t-role').value = m.role;
+  document.getElementById('tform-title').textContent = 'Edit Team Member';
+  tPhotoB64 = m.photo || null;
+  if (m.photo) document.getElementById('t-photo-prev').innerHTML = '<img src="' + m.photo + '" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">';
+  document.getElementById('team-form').scrollIntoView({behavior:'smooth'});
+}
+function cancelTeam() {
+  document.getElementById('t-eid').value=''; document.getElementById('t-name').value=''; document.getElementById('t-role').value='';
+  document.getElementById('tform-title').textContent='Add Team Member';
+  document.getElementById('t-photo-prev').innerHTML='<div style="font-size:28px;">&#128247;</div><p>Click to upload</p>';
+  tPhotoB64=null;
+}
+function rmTeam(id) { if (!confirm('Remove this member?')) return; DB.deleteTeamMember(id); renderTeam(); renderKPIs(); }
+function prevTeamPhoto(inp) { readImage(inp.files[0], function(b){ if(!b)return; tPhotoB64=b; document.getElementById('t-photo-prev').innerHTML='<img src="'+b+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">'; }); }
+
+function renderMsgs() {
+  var msgs = DB.getMessages().slice().reverse();
+  var el   = document.getElementById('msgs-list');
+  if (!msgs.length) { el.innerHTML='<div class="empty"><div class="empty-icon">&#128235;</div><p>No messages yet.</p></div>'; return; }
+  el.innerHTML = msgs.map(function(m) {
+    var p = DB.getProductById(m.productId);
+    var pn = p ? p.name : 'Unknown';
+    var to = DB.getUserById(m.toId);
+    return '<div class="msg-card ' + (m.read?'':'unread') + '"><div class="msg-meta">From <strong>' + escHtml(m.fromName) + '</strong> &rarr; <strong>' + escHtml(to?to.name:'?') + '</strong> &middot; Re: <em>' + escHtml(pn) + '</em> &middot; ' + formatDate(m.date) + (m.read?'':' <span class="badge badge-green">New</span>') + '</div><div class="msg-body">' + escHtml(m.text) + '</div><button class="btn btn-danger btn-sm" style="margin-top:8px;" onclick="delMsg(' + m.id + ')">&#128465; Delete</button></div>';
+  }).join('');
+}
+function delMsg(id) { DB.saveMessages(DB.getMessages().filter(function(m){return m.id!==id;})); renderMsgs(); renderKPIs(); }
+
+function renderProfile() {
+  var u  = Auth.getUser();
+  var fu = DB.getUserById(u.id); if (!fu) return;
+  document.getElementById('ap-name').value  = fu.name  || '';
+  document.getElementById('ap-phone').value = fu.phone || '';
+  var d = document.getElementById('ap-display');
+  d.innerHTML = fu.profileImage ? '<img src="' + fu.profileImage + '">' : escHtml(fu.name.charAt(0));
+  document.getElementById('ap-info').innerHTML =
+    '<div class="contact-row"><div class="ci-icon">&#128100;</div><div><div class="ci-label">Name</div><div class="ci-value">' + escHtml(fu.name) + '</div></div></div>'
+    + '<div class="contact-row"><div class="ci-icon">&#128231;</div><div><div class="ci-label">Email</div><div class="ci-value">' + escHtml(fu.email) + '</div></div></div>'
+    + '<div class="contact-row"><div class="ci-icon">&#128222;</div><div><div class="ci-label">Phone</div><div class="ci-value">' + escHtml(fu.phone||'&mdash;') + '</div></div></div>'
+    + '<div class="contact-row"><div class="ci-icon">&#128737;</div><div><div class="ci-label">Role</div><div class="ci-value"><span class="badge badge-blue">Administrator</span></div></div></div>';
+}
+function uploadAdminPhoto(inp) {
+  readImage(inp.files[0], function(b64) {
+    if (!b64) return;
+    var u = Auth.getUser();
+    DB.updateUser(u.id, {profileImage:b64});
+    var s = DB.getSession(); s.profileImage = b64; DB.setSession(s);
+    renderProfile(); updateNavbar(); showAlert('Photo updated!','success');
+  });
+}
+function saveAdminInfo() {
+  var name = document.getElementById('ap-name').value.trim(), phone = document.getElementById('ap-phone').value.trim();
+  if (!name) { showAlert('Name cannot be empty.','error'); return; }
+  var u = Auth.getUser();
+  DB.updateUser(u.id, {name:name, phone:phone});
+  var s = DB.getSession(); s.name = name; DB.setSession(s);
+  renderProfile(); updateNavbar(); showAlert('Profile saved!','success');
+}
+function changePW() {
+  var cur = document.getElementById('cp-cur').value, nw = document.getElementById('cp-new').value, con = document.getElementById('cp-con').value;
+  if (!cur||!nw||!con) { showAlert('Fill in all password fields.','error'); return; }
+  var u = Auth.getUser(), fu = DB.getUserById(u.id);
+  if (!fu || fu.password !== cur) { showAlert('Current password is incorrect.','error'); return; }
+  if (nw !== con) { showAlert('New passwords do not match.','error'); return; }
+  if (nw.length < 6) { showAlert('Password must be at least 6 characters.','error'); return; }
+  DB.updateUser(u.id, {password:nw});
+  document.getElementById('cp-cur').value = document.getElementById('cp-new').value = document.getElementById('cp-con').value = '';
+  showAlert('Password changed!','success');
+}
+</script>
+</body></html>

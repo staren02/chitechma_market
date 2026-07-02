@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Chitechma &mdash; Contact Seller</title><link rel="stylesheet" href="css/style.css"></head>
+<body>
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <img src="images/logo.png" alt="Chitechma Logo">
+    <div><div class="logo-name">Chitechma University</div><div class="logo-sub">Student Marketplace &middot; Buea</div></div>
+  </a>
+  <nav class="topbar-nav">
+    <a href="index.html" id="nl-home">Home</a>
+    <a href="products.html" id="nl-products">Products</a>
+    <a href="sell.html" id="nl-sell">Sell Item</a>
+    <a href="dashboard.html" id="nl-dashboard">Dashboard</a>
+    <a href="about.html" id="nl-about">About</a>
+    <a href="contact.html" id="nl-contact">Contact</a>
+  </nav>
+  <div id="nav-user-desktop"></div>
+  <button class="nav-toggle" onclick="toggleMobileNav()">&#9776;</button>
+</header>
+<div class="nav-overlay" id="nav-overlay" onclick="closeMobileNav()"></div>
+<div class="mobile-nav-panel" id="mobile-nav-panel">
+  <div class="mnp-head">
+    <span class="brand">&#127891; Menu</span>
+    <button class="mnp-close" onclick="closeMobileNav()">&#10005;</button>
+  </div>
+  <div class="mnp-links">
+    <a href="index.html" id="ml-home">&#127968; Home</a>
+    <a href="products.html" id="ml-products">&#128717; Products</a>
+    <a href="sell.html" id="ml-sell">&#128230; Sell Item</a>
+    <a href="dashboard.html" id="ml-dashboard">&#128203; Dashboard</a>
+    <a href="about.html" id="ml-about">&#8505; About</a>
+    <a href="contact.html" id="ml-contact">&#128222; Contact</a>
+  </div>
+  <div id="nav-user-mobile"></div>
+</div>
+<script>(function(){var p=window.location.pathname.split("/").pop()||"index.html";var map={"index.html":"home","products.html":"products","sell.html":"sell","dashboard.html":"dashboard","about.html":"about","contact.html":"contact","admin.html":"dashboard"};var key=map[p]||"home";var d=document.getElementById("nl-"+key);if(d)d.classList.add("active");var m=document.getElementById("ml-"+key);if(m)m.classList.add("active");})();</script>
+<div class="page-wrap">
+  <p style="margin-bottom:18px;"><a href="products.html" style="color:var(--green);font-weight:600;font-size:14px;">&#8592; Back to Products</a></p>
+  <div id="alert-box"></div>
+  <div id="content"><div class="empty"><div class="empty-icon">&#8987;</div><p>Loading...</p></div></div>
+</div>
+<footer><p class="footer-brand">Chitechma University Institute</p><p>Student Marketplace &mdash; Buea, Cameroon</p><p style="margin-top:8px;"><a href="about.html">About</a> &nbsp;&bull;&nbsp; <a href="contact.html">Contact</a></p></footer>
+<script src="js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var id = parseInt(getParam('id'));
+  var p  = id ? DB.getProductById(id) : null;
+  if (!p) { document.getElementById('content').innerHTML = '<div class="empty"><div class="empty-icon">&#10060;</div><p>Product not found. <a href="products.html">Back to products</a></p></div>'; return; }
+  var thumb = p.image
+    ? '<img src="' + p.image + '" style="width:100%;max-height:300px;object-fit:cover;border-radius:var(--radius-md);margin-bottom:18px;">'
+    : '<div style="width:100%;height:200px;background:' + (p.color||'#33A344') + ';border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:70px;margin-bottom:18px;">' + (p.emoji||'&#128230;') + '</div>';
+  document.getElementById('content').innerHTML =
+    '<div class="two-col">'
+    + '<div class="col-main">'
+    + '<h1 class="page-title">' + escHtml(p.name) + '</h1>'
+    + thumb
+    + '<div class="card"><div class="card-title">Product Details</div>'
+    + '<p><strong>Price:</strong> <span style="font-size:20px;font-weight:800;color:var(--green);">' + formatPrice(p.price) + '</span></p>'
+    + '<p style="margin-top:8px;"><strong>Condition:</strong> <span class="product-badge">' + (CONDITIONS[p.condition]||p.condition) + '</span></p>'
+    + '<p style="margin-top:8px;"><strong>Category:</strong> ' + escHtml(p.category) + '</p>'
+    + '<p style="margin-top:8px;"><strong>Listed:</strong> ' + formatDate(p.date) + '</p>'
+    + '<p style="margin-top:14px;font-size:13px;color:var(--text-2);line-height:1.7;">' + escHtml(p.description) + '</p>'
+    + '</div></div>'
+    + '<div class="col-side">'
+    + '<div class="card"><div class="card-title">&#128100; Seller Information</div>'
+    + '<div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">'
+    + '<div class="user-avatar" style="width:52px;height:52px;font-size:20px;flex-shrink:0;">' + escHtml(p.sellerName.charAt(0)) + '</div>'
+    + '<div><div style="font-size:17px;font-weight:700;">' + escHtml(p.sellerName) + '</div><div style="font-size:12px;color:var(--text-3);">Chitechma Student</div></div>'
+    + '</div>'
+    + '<a href="tel:' + escHtml(p.sellerPhone) + '" class="contact-method"><div class="cm-icon">&#128222;</div><div><div class="cm-label">Phone / WhatsApp</div><div class="cm-value">' + escHtml(p.sellerPhone) + '</div></div></a>'
+    + (p.sellerEmail ? '<a href="mailto:' + escHtml(p.sellerEmail) + '" class="contact-method"><div class="cm-icon">&#128231;</div><div><div class="cm-label">Email</div><div class="cm-value">' + escHtml(p.sellerEmail) + '</div></div></a>' : '')
+    + '<a href="https://wa.me/237' + p.sellerPhone.replace(/\s/g,'') + '" target="_blank" class="contact-method"><div class="cm-icon">&#128172;</div><div><div class="cm-label">WhatsApp</div><div class="cm-value">Chat on WhatsApp</div></div></a>'
+    + '</div>'
+    + '<div class="card"><div class="card-title">&#9993; Send a Message</div>'
+    + '<p style="font-size:13px;color:var(--text-2);margin-bottom:16px;">Send the seller a message &mdash; they will see it in their dashboard.</p>'
+    + '<div class="form-group"><label>Your Name</label><input class="form-control" type="text" id="mn" placeholder="Your full name"></div>'
+    + '<div class="form-group"><label>Message</label><textarea class="form-control" id="mt" placeholder="Hi, I am interested in this item. Is it still available?"></textarea></div>'
+    + '<button class="btn btn-primary btn-block" onclick="sendMsg(' + p.id + ',' + (p.sellerId||0) + ')">Send Message</button>'
+    + '</div>'
+    + '</div></div>';
+  var u = Auth.getUser();
+  if (u) { var mn = document.getElementById('mn'); if (mn) mn.value = u.name; }
+});
+function sendMsg(pid, sid) {
+  var name = document.getElementById('mn').value.trim();
+  var text = document.getElementById('mt').value.trim();
+  if (!name || !text) { showAlert('Please enter your name and a message.','error'); return; }
+  if (!sid) { showAlert('Seller info not found.','error'); return; }
+  var u = Auth.getUser();
+  DB.addMessage({ id:uid(), fromId:u?u.id:0, fromName:name, toId:sid, productId:pid, text:text, date:new Date().toISOString(), read:false });
+  showAlert('Message sent! The seller will see it in their dashboard.','success');
+  document.getElementById('mt').value = '';
+}
+</script>
+</body></html>
