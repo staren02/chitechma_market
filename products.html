@@ -1,8 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Chitechma &mdash; Products</title><link rel="stylesheet" href="css/style.css"></head>
-<body>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Chitechma &mdash; Products</title><link rel="stylesheet" href="css/style.css"></head><body>
 <header class="topbar">
   <a href="index.html" class="topbar-logo">
     <img src="images/logo.png" alt="Chitechma Logo">
@@ -21,10 +17,7 @@
 </header>
 <div class="nav-overlay" id="nav-overlay" onclick="closeMobileNav()"></div>
 <div class="mobile-nav-panel" id="mobile-nav-panel">
-  <div class="mnp-head">
-    <span class="brand">&#127891; Menu</span>
-    <button class="mnp-close" onclick="closeMobileNav()">&#10005;</button>
-  </div>
+  <div class="mnp-head"><span class="brand">&#127891; Menu</span><button class="mnp-close" onclick="closeMobileNav()">&#10005;</button></div>
   <div class="mnp-links">
     <a href="index.html" id="ml-home">&#127968; Home</a>
     <a href="products.html" id="ml-products">&#128717; Products</a>
@@ -35,79 +28,35 @@
   </div>
   <div id="nav-user-mobile"></div>
 </div>
-<script>(function(){var p=window.location.pathname.split("/").pop()||"index.html";var map={"index.html":"home","products.html":"products","sell.html":"sell","dashboard.html":"dashboard","about.html":"about","contact.html":"contact","admin.html":"dashboard"};var key=map[p]||"home";var d=document.getElementById("nl-"+key);if(d)d.classList.add("active");var m=document.getElementById("ml-"+key);if(m)m.classList.add("active");})();</script>
+
 <div class="page-wrap">
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px;">
     <h1 class="page-title" style="margin:0;border:none;padding:0;">All Products</h1>
-    <span id="pcount" style="font-size:13px;color:var(--text-3);font-weight:500;"></span>
+    <span id="pcount" style="font-size:13px;color:var(--t3);font-weight:500;"></span>
   </div>
   <div class="filter-bar">
-    <input class="form-control" style="flex:2;" type="text" id="q" placeholder="Search products or seller name..." oninput="go()">
-    <select class="form-control" id="cat" onchange="go()">
-      <option value="">All Categories</option>
-      <option value="clothing">Clothing &amp; Accessories</option>
-      <option value="electronics">Electronics</option>
-      <option value="books">Books &amp; Study Materials</option>
-      <option value="furniture">Furniture</option>
-      <option value="sports">Sports &amp; Equipment</option>
-      <option value="other">Other</option>
-    </select>
-    <select class="form-control" id="cond" onchange="go()">
-      <option value="">All Conditions</option>
-      <option value="new">Brand New</option>
-      <option value="like-new">Like New</option>
-      <option value="very-good">Very Good</option>
-      <option value="good">Good</option>
-      <option value="fair">Fair</option>
-    </select>
-    <select class="form-control" id="srt" onchange="go()">
-      <option value="newest">Newest First</option>
-      <option value="pa">Price: Low to High</option>
-      <option value="pd">Price: High to Low</option>
-    </select>
+    <input class="form-control" style="flex:2;" type="text" id="q" placeholder="Search products or seller..." oninput="go()">
+    <select class="form-control" id="cat" onchange="go()"><option value="">All Categories</option><option value="clothing">Clothing &amp; Accessories</option><option value="electronics">Electronics</option><option value="books">Books &amp; Study Materials</option><option value="furniture">Furniture</option><option value="sports">Sports &amp; Equipment</option><option value="other">Other</option></select>
+    <select class="form-control" id="cond" onchange="go()"><option value="">All Conditions</option><option value="new">Brand New</option><option value="like-new">Like New</option><option value="very-good">Very Good</option><option value="good">Good</option><option value="fair">Fair</option></select>
+    <select class="form-control" id="srt" onchange="go()"><option value="newest">Newest First</option><option value="pa">Price: Low to High</option><option value="pd">Price: High to Low</option></select>
     <button class="btn btn-ghost btn-sm" onclick="clearF()">&#10006; Clear</button>
   </div>
-  <div id="info" style="font-size:13px;color:var(--text-3);margin-bottom:18px;"></div>
+  <div id="info" style="font-size:13px;color:var(--t3);margin-bottom:18px;"></div>
   <div id="grid" class="products-grid"></div>
 </div>
-<div style="background:var(--green-light);border-top:2px solid var(--green-mid);padding:52px 28px;text-align:center;margin-top:40px;">
-  <p style="font-size:20px;font-weight:800;color:var(--green-dark);margin-bottom:8px;">Have something to sell?</p>
-  <p style="font-size:14px;color:var(--text-2);margin-bottom:22px;">List your item and reach every Chitechma student instantly.</p>
+<div style="background:var(--gl);border-top:2px solid var(--gm);padding:52px 28px;text-align:center;margin-top:40px;">
+  <p style="font-size:20px;font-weight:800;color:var(--gd);margin-bottom:8px;">Have something to sell?</p>
+  <p style="font-size:14px;color:var(--t2);margin-bottom:22px;">List your item and reach every Chitechma student instantly.</p>
   <a href="sell.html" class="btn btn-primary">+ List My Item</a>
 </div>
-<footer><p class="footer-brand">Chitechma University Institute</p><p>Student Marketplace &mdash; Buea, Cameroon</p><p style="margin-top:8px;"><a href="about.html">About</a> &nbsp;&bull;&nbsp; <a href="contact.html">Contact</a></p></footer>
+<footer>
+  <p class="footer-brand">Chitechma University Institute</p>
+  <p>Student Marketplace &mdash; Buea, Cameroon</p>
+  <p style="margin-top:8px;"><a href="about.html">About</a> &nbsp;&bull;&nbsp; <a href="contact.html">Contact</a></p>
+</footer>
 <script src="js/app.js"></script>
-<script>
-var ALL = [];
-document.addEventListener('DOMContentLoaded', function() {
-  ALL = DB.getApproved();
-  document.getElementById('pcount').textContent = ALL.length + ' items listed';
-  go();
-});
-function go() {
-  var q   = (document.getElementById('q').value || '').toLowerCase().trim();
-  var cat = document.getElementById('cat').value;
-  var cnd = document.getElementById('cond').value;
-  var srt = document.getElementById('srt').value;
-  var r = ALL.filter(function(p) {
-    return (!q   || p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q) || p.sellerName.toLowerCase().includes(q))
-        && (!cat || p.category  === cat)
-        && (!cnd || p.condition === cnd);
-  });
-  if (srt === 'pa') r.sort(function(a,b){ return a.price - b.price; });
-  else if (srt === 'pd') r.sort(function(a,b){ return b.price - a.price; });
-  else r.sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
-  document.getElementById('info').textContent = r.length + ' product' + (r.length !== 1 ? 's' : '') + ' found';
-  document.getElementById('grid').innerHTML = r.length
-    ? r.map(buildCard).join('')
-    : '<div class="empty" style="width:100%"><div class="empty-icon">&#128269;</div><p>No products match. <a href="sell.html">Be the first to list one!</a></p></div>';
-}
-function clearF() {
-  document.getElementById('q').value = '';
-  document.getElementById('cat').value = '';
-  document.getElementById('cond').value = '';
-  document.getElementById('srt').value = 'newest';
-  go();
-}
-</script>
+<script>var ALL=[];
+document.addEventListener("DOMContentLoaded",function(){ALL=DB.getApproved();document.getElementById("pcount").textContent=ALL.length+" items listed";go();});
+function go(){var q=(document.getElementById("q").value||"").toLowerCase().trim(),cat=document.getElementById("cat").value,cnd=document.getElementById("cond").value,srt=document.getElementById("srt").value;var r=ALL.filter(function(p){return(!q||p.name.toLowerCase().includes(q)||p.description.toLowerCase().includes(q)||p.sellerName.toLowerCase().includes(q))&&(!cat||p.category===cat)&&(!cnd||p.condition===cnd);});if(srt==="pa")r.sort(function(a,b){return a.price-b.price;});else if(srt==="pd")r.sort(function(a,b){return b.price-a.price;});else r.sort(function(a,b){return new Date(b.date)-new Date(a.date);});document.getElementById("info").textContent=r.length+" product"+(r.length!==1?"s":"")+" found";document.getElementById("grid").innerHTML=r.length?r.map(buildCard).join(""):"<div class=\"empty\" style=\"width:100%\"><div class=\"empty-icon\">&#128269;</div><p>No products match. <a href=\"sell.html\">Be the first to list one!</a></p></div>";}
+function clearF(){document.getElementById("q").value="";document.getElementById("cat").value="";document.getElementById("cond").value="";document.getElementById("srt").value="newest";go();}</script>
 </body></html>

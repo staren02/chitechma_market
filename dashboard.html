@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Chitechma &mdash; Dashboard</title>
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Chitechma &mdash; Dashboard</title><link rel="stylesheet" href="css/style.css"></head><body>
 <header class="topbar">
   <a href="index.html" class="topbar-logo">
     <img src="images/logo.png" alt="Chitechma Logo">
@@ -24,10 +17,7 @@
 </header>
 <div class="nav-overlay" id="nav-overlay" onclick="closeMobileNav()"></div>
 <div class="mobile-nav-panel" id="mobile-nav-panel">
-  <div class="mnp-head">
-    <span class="brand">&#127891; Menu</span>
-    <button class="mnp-close" onclick="closeMobileNav()">&#10005;</button>
-  </div>
+  <div class="mnp-head"><span class="brand">&#127891; Menu</span><button class="mnp-close" onclick="closeMobileNav()">&#10005;</button></div>
   <div class="mnp-links">
     <a href="index.html" id="ml-home">&#127968; Home</a>
     <a href="products.html" id="ml-products">&#128717; Products</a>
@@ -38,15 +28,7 @@
   </div>
   <div id="nav-user-mobile"></div>
 </div>
-<script>
-(function(){
-  var p=window.location.pathname.split("/").pop()||"index.html";
-  var map={"index.html":"home","products.html":"products","sell.html":"sell","dashboard.html":"dashboard","about.html":"about","contact.html":"contact","admin.html":"dashboard"};
-  var key=map[p]||"home";
-  var d=document.getElementById("nl-"+key); if(d) d.classList.add("active");
-  var m=document.getElementById("ml-"+key); if(m) m.classList.add("active");
-})();
-</script>
+
 <div class="page-wrap">
   <div class="welcome-bar">
     <div><h2 id="wname">Welcome!</h2><p>Chitechma Student Marketplace</p></div>
@@ -60,9 +42,9 @@
   <p class="section-label">Quick actions</p>
   <div class="dash-grid" style="margin-bottom:36px;">
     <a href="products.html" class="dash-tile"><div class="dash-tile-icon">&#128717;</div><div class="dash-tile-title">Browse Products</div><div class="dash-tile-desc">Find items from other students.</div></a>
-    <a href="sell.html"     class="dash-tile"><div class="dash-tile-icon">&#128230;</div><div class="dash-tile-title">Sell an Item</div><div class="dash-tile-desc">List something for sale instantly.</div></a>
-    <a href="#my-listings"  class="dash-tile"><div class="dash-tile-icon">&#128203;</div><div class="dash-tile-title">My Listings</div><div class="dash-tile-desc">View and manage your items.</div></a>
-    <a href="#inbox"        class="dash-tile"><div class="dash-tile-icon">&#128236;</div><div class="dash-tile-title">Inbox</div><div class="dash-tile-desc">Messages from interested buyers.</div></a>
+    <a href="sell.html" class="dash-tile"><div class="dash-tile-icon">&#128230;</div><div class="dash-tile-title">Sell an Item</div><div class="dash-tile-desc">List something for sale instantly.</div></a>
+    <a href="#my-listings" class="dash-tile"><div class="dash-tile-icon">&#128203;</div><div class="dash-tile-title">My Listings</div><div class="dash-tile-desc">View and manage your items.</div></a>
+    <a href="#inbox" class="dash-tile"><div class="dash-tile-icon">&#128236;</div><div class="dash-tile-title">Inbox</div><div class="dash-tile-desc">Messages from interested buyers.</div></a>
   </div>
   <div id="alert-box"></div>
   <p class="section-label" id="my-listings">My Listings</p>
@@ -76,56 +58,22 @@
   <p style="margin-top:8px;"><a href="about.html">About</a> &nbsp;&bull;&nbsp; <a href="contact.html">Contact</a></p>
 </footer>
 <script src="js/app.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  if (!Auth.requireLogin()) return;
-  var u = Auth.getUser();
-  var all = DB.getApproved();
-  var mine = all.filter(function(p){ return p.sellerId === u.id; });
-  var ur = DB.countUnread(u.id);
-  document.getElementById('wname').textContent = 'Welcome back, ' + u.name.split(' ')[0] + '! ';
-  document.getElementById('s-all').textContent  = all.length;
-  document.getElementById('s-mine').textContent = mine.length;
-  document.getElementById('s-msg').textContent  = ur;
-  var g = document.getElementById('my-grid');
-  if (!mine.length) {
-    g.innerHTML = '<div class="empty"><div class="empty-icon">&#128235;</div><p>No listings yet. <a href="sell.html">Sell something!</a></p></div>';
-  } else {
-    g.innerHTML = mine.map(buildCard).join('');
-    var cards = g.querySelectorAll('.product-card');
-    mine.forEach(function(p, i) {
-      if (cards[i]) {
-        var d = document.createElement('div'); d.style.padding = '0 15px 15px';
-        d.innerHTML = '<button class="btn btn-danger btn-sm btn-block" onclick="delP(' + p.id + ')">&#128465; Delete Listing</button>';
-        cards[i].appendChild(d);
-      }
-    });
-  }
-  var msgs = DB.getInbox(u.id);
-  var il = document.getElementById('inbox-list');
-  if (!msgs.length) {
-    il.innerHTML = '<div class="empty"><div class="empty-icon">&#128235;</div><p>No messages yet.</p></div>';
-  } else {
-    if (ur > 0) document.getElementById('ubadge').innerHTML = '<span class="badge badge-red">' + ur + ' new</span>';
-    il.innerHTML = msgs.slice().reverse().map(function(m) {
-      var pr = DB.getProductById(m.productId);
-      var pn = pr ? pr.name : 'Unknown product';
-      return '<div class="msg-card ' + (m.read ? '' : 'unread') + '">'
-        + '<div class="msg-meta">From <strong>' + escHtml(m.fromName) + '</strong> &middot; Re: <em>' + escHtml(pn) + '</em> &middot; ' + formatDate(m.date) + '</div>'
-        + '<div class="msg-body">' + escHtml(m.text) + '</div>'
-        + '<div class="msg-reply"><input id="ri' + m.id + '" placeholder="Type a reply..."><button onclick="doReply(' + m.id + ',' + m.fromId + ',' + m.productId + ')">Send</button></div></div>';
-    }).join('');
-    msgs.forEach(function(m){ DB.markRead(m.id); });
-    updateNavbar();
-  }
+<script>document.addEventListener("DOMContentLoaded",function(){
+  if(!Auth.requireLogin())return;
+  var u=Auth.getUser(),all=DB.getApproved(),mine=all.filter(function(p){return p.sellerId===u.id;}),ur=DB.countUnread(u.id);
+  document.getElementById("wname").textContent="Welcome back, "+u.name.split(" ")[0]+"!";
+  document.getElementById("s-all").textContent=all.length;
+  document.getElementById("s-mine").textContent=mine.length;
+  document.getElementById("s-msg").textContent=ur;
+  var g=document.getElementById("my-grid");
+  if(!mine.length){g.innerHTML="<div class=\"empty\"><div class=\"empty-icon\">&#128235;</div><p>No listings yet. <a href=\"sell.html\">Sell something!</a></p></div>";}
+  else{g.innerHTML=mine.map(buildCard).join("");var cards=g.querySelectorAll(".product-card");mine.forEach(function(p,i){if(cards[i]){var d=document.createElement("div");d.style.padding="0 15px 15px";d.innerHTML="<button class=\"btn btn-danger btn-sm btn-block\" onclick=\"delP("+p.id+")\">&#128465; Delete</button>";cards[i].appendChild(d);}});}
+  var msgs=DB.getInbox(u.id),il=document.getElementById("inbox-list");
+  if(!msgs.length){il.innerHTML="<div class=\"empty\"><div class=\"empty-icon\">&#128235;</div><p>No messages yet.</p></div>";}
+  else{if(ur>0)document.getElementById("ubadge").innerHTML="<span class=\"badge badge-red\">"+ur+" new</span>";
+    il.innerHTML=msgs.slice().reverse().map(function(m){var pr=DB.getProductById(m.productId),pn=pr?pr.name:"Unknown";return"<div class=\"msg-card "+(m.read?"":"unread")+"\"><div class=\"msg-meta\">From <strong>"+escHtml(m.fromName)+"</strong> &middot; Re: <em>"+escHtml(pn)+"</em> &middot; "+formatDate(m.date)+"</div><div class=\"msg-body\">"+escHtml(m.text)+"</div><div class=\"msg-reply\"><input id=\"ri"+m.id+"\" placeholder=\"Reply...\"><button onclick=\"doReply("+m.id+","+m.fromId+","+m.productId+")\">Send</button></div></div>";}).join("");
+    msgs.forEach(function(m){DB.markRead(m.id);});updateNavbar();}
 });
-function delP(id) { if (!confirm('Delete this listing?')) return; DB.deleteProduct(id); location.reload(); }
-function doReply(mid, tid, pid) {
-  var inp = document.getElementById('ri' + mid), t = inp ? inp.value.trim() : '';
-  if (!t) return;
-  var u = Auth.getUser();
-  DB.addMessage({ id: uid(), fromId: u.id, fromName: u.name, toId: tid, productId: pid, text: t, date: new Date().toISOString(), read: false });
-  inp.value = ''; showAlert('Reply sent!', 'success');
-}
-</script>
+function delP(id){if(!confirm("Delete this listing?"))return;DB.deleteProduct(id);location.reload();}
+function doReply(mid,tid,pid){var inp=document.getElementById("ri"+mid),t=inp?inp.value.trim():"";if(!t)return;var u=Auth.getUser();DB.addMessage({id:uid(),fromId:u.id,fromName:u.name,toId:tid,productId:pid,text:t,date:new Date().toISOString(),read:false});inp.value="";showAlert("Reply sent!","success");}</script>
 </body></html>

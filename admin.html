@@ -1,285 +1,1093 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Chitechma &mdash; Admin</title><link rel="stylesheet" href="css/style.css"></head>
-<body>
-<header class="topbar">
-  <a href="index.html" class="topbar-logo">
-    <img src="images/logo.png" alt="Chitechma Logo">
-    <div><div class="logo-name">Chitechma University</div><div class="logo-sub">Student Marketplace &middot; Buea</div></div>
-  </a>
-  <nav class="topbar-nav">
-    <a href="index.html" id="nl-home">Home</a>
-    <a href="products.html" id="nl-products">Products</a>
-    <a href="sell.html" id="nl-sell">Sell Item</a>
-    <a href="dashboard.html" id="nl-dashboard">Dashboard</a>
-    <a href="about.html" id="nl-about">About</a>
-    <a href="contact.html" id="nl-contact">Contact</a>
-  </nav>
-  <div id="nav-user-desktop"></div>
-  <button class="nav-toggle" onclick="toggleMobileNav()">&#9776;</button>
-</header>
-<div class="nav-overlay" id="nav-overlay" onclick="closeMobileNav()"></div>
-<div class="mobile-nav-panel" id="mobile-nav-panel">
-  <div class="mnp-head">
-    <span class="brand">&#127891; Menu</span>
-    <button class="mnp-close" onclick="closeMobileNav()">&#10005;</button>
-  </div>
-  <div class="mnp-links">
-    <a href="index.html" id="ml-home">&#127968; Home</a>
-    <a href="products.html" id="ml-products">&#128717; Products</a>
-    <a href="sell.html" id="ml-sell">&#128230; Sell Item</a>
-    <a href="dashboard.html" id="ml-dashboard">&#128203; Dashboard</a>
-    <a href="about.html" id="ml-about">&#8505; About</a>
-    <a href="contact.html" id="ml-contact">&#128222; Contact</a>
-  </div>
-  <div id="nav-user-mobile"></div>
-</div>
-<script>(function(){var p=window.location.pathname.split("/").pop()||"index.html";var map={"index.html":"home","products.html":"products","sell.html":"sell","dashboard.html":"dashboard","about.html":"about","contact.html":"contact","admin.html":"dashboard"};var key=map[p]||"home";var d=document.getElementById("nl-"+key);if(d)d.classList.add("active");var m=document.getElementById("ml-"+key);if(m)m.classList.add("active");})();</script>
-<div class="page-wrap">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px;">
-    <h1 class="page-title" style="margin:0;border:none;padding:0;">&#128737; Admin Dashboard</h1>
-    <span id="admin-id" style="font-size:13px;color:var(--text-3);"></span>
-  </div>
-  <div id="alert-box"></div>
-  <div class="admin-stat-row" id="kpis"></div>
-  <div class="admin-tabs">
-    <div class="admin-tab active" onclick="tab('products')">&#128230; Products</div>
-    <div class="admin-tab" onclick="tab('users')">&#128101; Users</div>
-    <div class="admin-tab" onclick="tab('team')">&#129309; Team</div>
-    <div class="admin-tab" onclick="tab('msgs')">&#128236; Messages</div>
-    <div class="admin-tab" onclick="tab('profile')">&#128100; My Profile</div>
-  </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chitechma — Admin Panel</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Extra admin-only styles */
+    body { padding-top: 0; }
 
-  <!-- PRODUCTS -->
-  <div id="pane-products" class="tab-pane active">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
-      <strong style="color:var(--text-1);">All Listings</strong>
-      <input class="form-control" style="max-width:240px;" type="text" id="psearch" placeholder="Search..." oninput="renderProducts()">
+    /* Quick action buttons row */
+    .action-row { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:24px; }
+
+    /* Stat change indicator */
+    .stat-change { font-size:12px; margin-top:6px; font-weight:600; }
+    .stat-change.up   { color:#16a34a; }
+    .stat-change.down { color:#dc2626; }
+
+    /* Approval card */
+    .approval-card {
+      background:#fff; border:1px solid var(--bdr); border-radius:var(--rm);
+      padding:18px; margin-bottom:14px; display:flex; gap:16px;
+      align-items:flex-start; box-shadow:var(--ss);
+    }
+    .approval-thumb {
+      width:64px; height:64px; border-radius:var(--r); object-fit:cover;
+      flex-shrink:0; display:flex; align-items:center; justify-content:center;
+      font-size:28px;
+    }
+    .approval-info { flex:1; }
+    .approval-info h4 { font-size:15px; font-weight:700; color:var(--t1); margin-bottom:4px; }
+    .approval-info p  { font-size:13px; color:var(--t2); margin-bottom:3px; }
+    .approval-actions { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+
+    /* User detail row */
+    .user-detail-card {
+      background:#fff; border:1px solid var(--bdr); border-radius:var(--rm);
+      padding:16px 20px; margin-bottom:12px; display:flex;
+      align-items:center; gap:16px; flex-wrap:wrap;
+    }
+    .user-detail-avatar {
+      width:44px; height:44px; border-radius:50%; background:var(--g);
+      color:#fff; display:flex; align-items:center; justify-content:center;
+      font-size:16px; font-weight:700; flex-shrink:0; overflow:hidden;
+    }
+    .user-detail-avatar img { width:100%; height:100%; object-fit:cover; }
+    .user-detail-info { flex:1; min-width:160px; }
+    .user-detail-info h4 { font-size:14px; font-weight:700; color:var(--t1); }
+    .user-detail-info p  { font-size:12px; color:var(--t3); margin-top:2px; }
+    .user-detail-actions { display:flex; gap:8px; flex-wrap:wrap; margin-left:auto; }
+
+    /* Transaction card */
+    .txn-card {
+      background:#fff; border:1px solid var(--bdr); border-radius:var(--rm);
+      padding:18px 20px; margin-bottom:12px; box-shadow:var(--ss);
+    }
+    .txn-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
+    .txn-id     { font-size:12px; font-weight:700; color:var(--t3); letter-spacing:.04em; }
+    .txn-body   { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:14px; }
+    .txn-field  { flex:1; min-width:120px; }
+    .txn-field-label { font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--t3); margin-bottom:3px; }
+    .txn-field-value { font-size:14px; font-weight:600; color:var(--t1); }
+    .txn-note   { font-size:13px; color:var(--t2); background:var(--bg); padding:10px 14px; border-radius:var(--r); margin-bottom:14px; }
+    .txn-actions { display:flex; gap:8px; flex-wrap:wrap; }
+
+    /* Activity feed */
+    .activity-feed { max-height:380px; overflow-y:auto; }
+    .act-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--bdr); }
+    .act-item:last-child { border-bottom:none; }
+    .act-dot  { width:9px; height:9px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+    .act-dot.success { background:var(--g); }
+    .act-dot.warn    { background:var(--amber); }
+    .act-dot.danger  { background:var(--red); }
+    .act-dot.info    { background:var(--blue); }
+    .act-text { font-size:13px; color:var(--t2); line-height:1.5; }
+    .act-time { font-size:11px; color:var(--t3); margin-top:2px; }
+
+    /* Settings rows */
+    .setting-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 0; border-bottom:1px solid var(--bdr); gap:14px; flex-wrap:wrap;
+    }
+    .setting-row:last-child { border-bottom:none; }
+    .setting-label  { font-size:14px; font-weight:600; color:var(--t1); }
+    .setting-desc   { font-size:12px; color:var(--t3); margin-top:3px; }
+    .toggle-switch  { position:relative; display:inline-block; width:44px; height:24px; flex-shrink:0; }
+    .toggle-switch input { opacity:0; width:0; height:0; }
+    .toggle-slider  { position:absolute; cursor:pointer; inset:0; background:#cbd5e1; border-radius:24px; transition:.2s; }
+    .toggle-slider:before { content:''; position:absolute; height:18px; width:18px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.2s; }
+    input:checked + .toggle-slider { background:var(--g); }
+    input:checked + .toggle-slider:before { transform:translateX(20px); }
+
+    /* Reports chart bar */
+    .chart-bar-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+    .chart-bar-label { width:90px; font-size:12px; color:var(--t2); text-align:right; flex-shrink:0; }
+    .chart-bar-track { flex:1; height:22px; background:var(--bg); border-radius:var(--pill); overflow:hidden; }
+    .chart-bar-fill  { height:100%; border-radius:var(--pill); background:var(--g); display:flex; align-items:center; justify-content:flex-end; padding-right:8px; font-size:11px; font-weight:700; color:#fff; transition:width .4s ease; }
+    .chart-bar-val   { font-size:12px; color:var(--t2); width:70px; text-align:right; flex-shrink:0; }
+  </style>
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+
+  <!-- ═══════════════════════════════════════
+       SIDEBAR
+       ═══════════════════════════════════════ -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-head">
+      <img src="images/logo.png" alt="Logo">
+      <div>
+        <div class="admin-brand">Chitechma</div>
+        <div class="admin-brand-sub">Admin Panel</div>
+      </div>
     </div>
-    <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Photo</th><th>Name</th><th>Category</th><th>Price</th><th>Seller</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="ptbody"></tbody></table></div>
-  </div>
 
-  <!-- USERS -->
-  <div id="pane-users" class="tab-pane">
-    <strong style="color:var(--text-1);display:block;margin-bottom:16px;">Registered Users</strong>
-    <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Name</th><th>Email</th><th>Matricule</th><th>Phone</th><th>Role</th><th>Joined</th><th>Action</th></tr></thead><tbody id="utbody"></tbody></table></div>
-  </div>
+    <div class="sidebar-section">Overview</div>
+    <a class="sidebar-link active" id="sl-overview" onclick="showPane('overview')">
+      <span class="sl-icon">📊</span> Dashboard
+    </a>
+    <a class="sidebar-link" id="sl-activity" onclick="showPane('activity')">
+      <span class="sl-icon">📡</span> Activity Log
+    </a>
 
-  <!-- TEAM -->
-  <div id="pane-team" class="tab-pane">
-    <div class="inline-form" id="team-form">
-      <h3 id="tform-title">&#10133; Add Team Member</h3>
-      <input type="hidden" id="t-eid">
-      <div class="form-row">
-        <div class="form-group"><label>Full Name *</label><input class="form-control" type="text" id="t-name" placeholder="e.g. Jean Mballa"></div>
-        <div class="form-group"><label>Role *</label><input class="form-control" type="text" id="t-role" placeholder="e.g. Products Page"></div>
-      </div>
-      <div class="form-group">
-        <label>Profile Photo</label>
-        <div class="upload-area" style="max-width:180px;padding:14px;" onclick="document.getElementById('t-photo').click()">
-          <div id="t-photo-prev"><div style="font-size:28px;">&#128247;</div><p>Click to upload</p></div>
-        </div>
-        <input type="file" id="t-photo" accept="image/*" style="display:none;" onchange="prevTeamPhoto(this)">
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <button class="btn btn-primary btn-sm" onclick="saveTeam()">&#128190; Save</button>
-        <button class="btn btn-ghost btn-sm" onclick="cancelTeam()">&#10006; Cancel</button>
+    <div class="sidebar-section">Listings</div>
+    <a class="sidebar-link" id="sl-pending" onclick="showPane('pending')">
+      <span class="sl-icon">⏳</span> Pending Approval
+      <span class="sidebar-badge" id="sb-pending">0</span>
+    </a>
+    <a class="sidebar-link" id="sl-products" onclick="showPane('products')">
+      <span class="sl-icon">📦</span> All Listings
+    </a>
+
+    <div class="sidebar-section">Users</div>
+    <a class="sidebar-link" id="sl-users" onclick="showPane('users')">
+      <span class="sl-icon">👥</span> All Users
+    </a>
+    <a class="sidebar-link" id="sl-verify" onclick="showPane('verify')">
+      <span class="sl-icon">✅</span> Verify Students
+      <span class="sidebar-badge" id="sb-verify">0</span>
+    </a>
+
+    <div class="sidebar-section">Transactions</div>
+    <a class="sidebar-link" id="sl-transactions" onclick="showPane('transactions')">
+      <span class="sl-icon">💳</span> Transactions
+    </a>
+
+    <div class="sidebar-section">Communication</div>
+    <a class="sidebar-link" id="sl-messages" onclick="showPane('messages')">
+      <span class="sl-icon">📬</span> Messages
+      <span class="sidebar-badge" id="sb-msgs">0</span>
+    </a>
+
+    <div class="sidebar-section">Site</div>
+    <a class="sidebar-link" id="sl-team" onclick="showPane('team')">
+      <span class="sl-icon">🤝</span> Team Members
+    </a>
+    <a class="sidebar-link" id="sl-reports" onclick="showPane('reports')">
+      <span class="sl-icon">📈</span> Reports
+    </a>
+    <a class="sidebar-link" id="sl-settings" onclick="showPane('settings')">
+      <span class="sl-icon">⚙️</span> Settings
+    </a>
+    <a class="sidebar-link" id="sl-profile" onclick="showPane('profile')">
+      <span class="sl-icon">👤</span> My Profile
+    </a>
+
+    <div class="admin-sidebar-foot">
+      <a href="index.html" class="sidebar-link" style="color:rgba(255,255,255,.5);">
+        <span class="sl-icon">🌐</span> View Site
+      </a>
+      <div class="sidebar-logout" onclick="Auth.logout()">
+        <span style="font-size:16px;">🚪</span> Logout
       </div>
     </div>
-    <div id="team-table"></div>
-  </div>
+  </aside>
 
-  <!-- MESSAGES -->
-  <div id="pane-msgs" class="tab-pane">
-    <strong style="color:var(--text-1);display:block;margin-bottom:16px;">All Messages</strong>
-    <div id="msgs-list"></div>
-  </div>
+  <!-- ═══════════════════════════════════════
+       MAIN AREA
+       ═══════════════════════════════════════ -->
+  <main class="admin-main">
 
-  <!-- PROFILE -->
-  <div id="pane-profile" class="tab-pane">
-    <div class="two-col">
-      <div class="col-main">
-        <div class="card">
-          <div class="card-title">&#128444; Profile Photo</div>
-          <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:16px;">
-            <div id="ap-display" class="user-avatar" style="width:80px;height:80px;font-size:28px;flex-shrink:0;"></div>
-            <div>
-              <p style="font-size:13px;color:var(--text-2);margin-bottom:10px;">Upload a new profile photo</p>
-              <div class="upload-area" style="max-width:200px;padding:12px;" onclick="document.getElementById('ap-file').click()">
-                <p style="font-size:13px;">&#128247; Choose photo</p><p style="font-size:11px;color:var(--text-3);">JPG or PNG &middot; Max 1.5MB</p>
-              </div>
-              <input type="file" id="ap-file" accept="image/*" style="display:none;" onchange="uploadAdminPhoto(this)">
+    <!-- Top bar -->
+    <div class="admin-topbar">
+      <h1 id="pane-title">Dashboard</h1>
+      <div class="admin-topbar-right">
+        <span id="admin-greeting" style="font-size:13px;color:var(--t3);"></span>
+        <div id="admin-avatar" class="user-avatar" style="width:34px;height:34px;font-size:14px;cursor:pointer;" onclick="showPane('profile')"></div>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <div id="alert-box"></div>
+
+      <!-- ── OVERVIEW ─────────────────────────────────── -->
+      <div id="pane-overview" class="tab-pane active">
+        <div class="kpi-row" id="kpi-row"></div>
+        <div class="two-col">
+          <div class="col-main">
+            <div class="card">
+              <div class="card-title">⏳ Listings Awaiting Approval</div>
+              <div id="ov-pending"></div>
+            </div>
+            <div class="card">
+              <div class="card-title">⚠️ Disputed Transactions</div>
+              <div id="ov-disputed"></div>
+            </div>
+          </div>
+          <div class="col-side">
+            <div class="card">
+              <div class="card-title">📡 Recent Activity</div>
+              <div class="activity-feed" id="ov-activity"></div>
+            </div>
+            <div class="card" style="margin-top:0;">
+              <div class="card-title">👥 Unverified Students</div>
+              <div id="ov-unverified"></div>
             </div>
           </div>
         </div>
-        <div class="card">
-          <div class="card-title">&#9999; Update Information</div>
-          <div class="form-group"><label>Full Name</label><input class="form-control" type="text" id="ap-name"></div>
-          <div class="form-group"><label>Phone</label><input class="form-control" type="tel" id="ap-phone"></div>
-          <button class="btn btn-primary btn-sm" onclick="saveAdminInfo()">Save Changes</button>
-        </div>
-        <div class="card">
-          <div class="card-title">&#128274; Change Password</div>
-          <div class="form-group"><label>Current Password</label><input class="form-control" type="password" id="cp-cur"></div>
-          <div class="form-group"><label>New Password</label><input class="form-control" type="password" id="cp-new"></div>
-          <div class="form-group"><label>Confirm New</label><input class="form-control" type="password" id="cp-con"></div>
-          <button class="btn btn-primary btn-sm" onclick="changePW()">Update Password</button>
-        </div>
       </div>
-      <div class="col-side">
-        <div class="card"><div class="card-title">Account Info</div><div id="ap-info"></div></div>
-      </div>
-    </div>
-  </div>
 
-</div>
-<footer><p class="footer-brand">Chitechma University Institute</p><p>Student Marketplace &mdash; Buea, Cameroon</p><p style="margin-top:8px;"><a href="about.html">About</a> &nbsp;&bull;&nbsp; <a href="contact.html">Contact</a></p></footer>
+      <!-- ── ACTIVITY LOG ─────────────────────────────── -->
+      <div id="pane-activity" class="tab-pane">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+          <strong style="font-size:15px;">Full Activity Log</strong>
+          <button class="btn btn-danger btn-sm" onclick="clearActivity()">🗑️ Clear Log</button>
+        </div>
+        <div class="card" style="padding:0;">
+          <div id="activity-full" style="padding:0 20px;"></div>
+        </div>
+      </div>
+
+      <!-- ── PENDING APPROVAL ─────────────────────────── -->
+      <div id="pane-pending" class="tab-pane">
+        <div class="notice notice-warn" style="margin-bottom:20px;">
+          ⚠️ These listings have been submitted by students and are waiting for your review before going live.
+        </div>
+        <div id="pending-list"></div>
+      </div>
+
+      <!-- ── ALL LISTINGS ─────────────────────────────── -->
+      <div id="pane-products" class="tab-pane">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+          <strong style="font-size:15px;">All Listings</strong>
+          <input class="form-control" style="max-width:240px;" type="text" id="prod-search" placeholder="🔍 Search..." oninput="renderProducts()">
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead><tr><th>Photo</th><th>Name</th><th>Category</th><th>Price</th><th>Seller</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="prod-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── ALL USERS ────────────────────────────────── -->
+      <div id="pane-users" class="tab-pane">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+          <strong style="font-size:15px;">All Registered Users</strong>
+          <input class="form-control" style="max-width:240px;" type="text" id="user-search" placeholder="🔍 Search users..." oninput="renderUsers()">
+        </div>
+        <div id="users-list"></div>
+      </div>
+
+      <!-- ── VERIFY STUDENTS ─────────────────────────── -->
+      <div id="pane-verify" class="tab-pane">
+        <div class="notice notice-blue" style="margin-bottom:20px;">
+          ℹ️ These students have registered but have not been verified yet. Verify them to confirm they are real Chitechma students.
+        </div>
+        <div id="verify-list"></div>
+      </div>
+
+      <!-- ── TRANSACTIONS ─────────────────────────────── -->
+      <div id="pane-transactions" class="tab-pane">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+          <strong style="font-size:15px;">Transaction Monitor</strong>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <select class="form-control" id="txn-filter" onchange="renderTransactions()" style="max-width:160px;">
+              <option value="">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="disputed">Disputed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+            <button class="btn btn-primary btn-sm" onclick="openNewTxn()">+ Log Transaction</button>
+          </div>
+        </div>
+        <div id="txn-form-wrap" style="display:none;">
+          <div class="inline-form">
+            <h3>📝 Log a New Transaction</h3>
+            <div class="form-row">
+              <div class="form-group"><label>Product Name *</label><input class="form-control" id="tf-prod" placeholder="e.g. Nike Shoes"></div>
+              <div class="form-group"><label>Amount (FCFA) *</label><input class="form-control" type="number" id="tf-amt" placeholder="5000"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Buyer Name *</label><input class="form-control" id="tf-buyer" placeholder="Student name"></div>
+              <div class="form-group"><label>Seller Name *</label><input class="form-control" id="tf-seller" placeholder="Student name"></div>
+            </div>
+            <div class="form-group"><label>Note (optional)</label><input class="form-control" id="tf-note" placeholder="Any details about this transaction..."></div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn-primary btn-sm" onclick="saveTxn()">💾 Save</button>
+              <button class="btn btn-ghost btn-sm" onclick="closeTxnForm()">✖ Cancel</button>
+            </div>
+          </div>
+        </div>
+        <div id="txn-list"></div>
+      </div>
+
+      <!-- ── MESSAGES ──────────────────────────────────── -->
+      <div id="pane-messages" class="tab-pane">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+          <strong style="font-size:15px;">All Platform Messages</strong>
+          <button class="btn btn-danger btn-sm" onclick="if(confirm('Delete ALL messages?')){DB.saveMessages([]);renderMessages();showAlert('All messages deleted.','success');}">🗑️ Delete All</button>
+        </div>
+        <div id="msgs-list"></div>
+      </div>
+
+      <!-- ── TEAM MEMBERS ─────────────────────────────── -->
+      <div id="pane-team" class="tab-pane">
+        <div class="inline-form" id="team-form">
+          <h3 id="team-form-title">➕ Add Team Member</h3>
+          <input type="hidden" id="t-eid">
+          <div class="form-row">
+            <div class="form-group"><label>Full Name *</label><input class="form-control" type="text" id="t-name" placeholder="e.g. Jean Mballa"></div>
+            <div class="form-group"><label>Role *</label><input class="form-control" type="text" id="t-role" placeholder="e.g. Products Page & Sell Form"></div>
+          </div>
+          <div class="form-group">
+            <label>Profile Photo</label>
+            <div class="upload-area" style="max-width:180px;padding:14px;" onclick="document.getElementById('t-photo').click()">
+              <div id="t-photo-prev"><div style="font-size:28px;">📷</div><p>Click to upload</p></div>
+            </div>
+            <input type="file" id="t-photo" accept="image/*" style="display:none;" onchange="prevTeamPhoto(this)">
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-primary btn-sm" onclick="saveTeam()">💾 Save Member</button>
+            <button class="btn btn-ghost btn-sm" onclick="cancelTeam()">✖ Cancel</button>
+          </div>
+        </div>
+        <div id="team-table"></div>
+      </div>
+
+      <!-- ── REPORTS ───────────────────────────────────── -->
+      <div id="pane-reports" class="tab-pane">
+        <div class="two-col">
+          <div class="col-main">
+            <div class="card">
+              <div class="card-title">📦 Products by Category</div>
+              <div id="report-cats"></div>
+            </div>
+            <div class="card">
+              <div class="card-title">💳 Transaction Summary</div>
+              <div id="report-txns"></div>
+            </div>
+          </div>
+          <div class="col-side">
+            <div class="card">
+              <div class="card-title">📊 Platform Summary</div>
+              <div id="report-summary"></div>
+            </div>
+            <div class="card">
+              <div class="card-title">🏆 Top Sellers</div>
+              <div id="report-sellers"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SETTINGS ──────────────────────────────────── -->
+      <div id="pane-settings" class="tab-pane">
+        <div class="card">
+          <div class="card-title">⚙️ Platform Settings</div>
+          <div class="setting-row">
+            <div><div class="setting-label">Require Admin Approval for Listings</div><div class="setting-desc">New product listings must be approved before going live.</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="s-approval" checked onchange="saveSetting('require_approval',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Allow New Registrations</div><div class="setting-desc">Allow new students to register accounts.</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="s-register" checked onchange="saveSetting('allow_register',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Show Marketplace to Public</div><div class="setting-desc">Non-logged-in visitors can browse products.</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="s-public" checked onchange="saveSetting('public_browse',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Require Student Verification</div><div class="setting-desc">Only verified students can post listings.</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="s-verifyreq" onchange="saveSetting('verify_required',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">🗑️ Data Management</div>
+          <div class="setting-row">
+            <div><div class="setting-label">Clear All Messages</div><div class="setting-desc">Permanently delete all platform messages.</div></div>
+            <button class="btn btn-danger btn-sm" onclick="if(confirm('Delete all messages?')){DB.saveMessages([]);showAlert('Messages cleared.','success');}">Clear</button>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Clear Activity Log</div><div class="setting-desc">Remove all entries from the activity log.</div></div>
+            <button class="btn btn-danger btn-sm" onclick="clearActivity()">Clear</button>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Reset Demo Data</div><div class="setting-desc">Restore the original sample products and users.</div></div>
+            <button class="btn btn-warn btn-sm" onclick="resetData()">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PROFILE ───────────────────────────────────── -->
+      <div id="pane-profile" class="tab-pane">
+        <div class="two-col">
+          <div class="col-main">
+            <div class="card">
+              <div class="card-title">🖼️ Profile Photo</div>
+              <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:8px;">
+                <div id="ap-display" class="user-detail-avatar" style="width:80px;height:80px;font-size:28px;"></div>
+                <div>
+                  <p style="font-size:13px;color:var(--t2);margin-bottom:10px;">Upload a profile photo for your admin account.</p>
+                  <div class="upload-area" style="max-width:200px;padding:12px;" onclick="document.getElementById('ap-file').click()">
+                    <p style="font-size:13px;">📷 Choose photo</p>
+                    <p style="font-size:11px;color:var(--t3);">JPG or PNG · Max 1.5MB</p>
+                  </div>
+                  <input type="file" id="ap-file" accept="image/*" style="display:none;" onchange="uploadAdminPhoto(this)">
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">✏️ Update Information</div>
+              <div class="form-group"><label>Full Name</label><input class="form-control" type="text" id="ap-name"></div>
+              <div class="form-group"><label>Phone Number</label><input class="form-control" type="tel" id="ap-phone"></div>
+              <button class="btn btn-primary btn-sm" onclick="saveAdminInfo()">💾 Save Changes</button>
+            </div>
+            <div class="card">
+              <div class="card-title">🔒 Change Password</div>
+              <div class="form-group"><label>Current Password</label><input class="form-control" type="password" id="cp-cur" placeholder="Current password"></div>
+              <div class="form-group"><label>New Password</label><input class="form-control" type="password" id="cp-new" placeholder="Min 6 characters"></div>
+              <div class="form-group"><label>Confirm New</label><input class="form-control" type="password" id="cp-con" placeholder="Repeat new password"></div>
+              <button class="btn btn-primary btn-sm" onclick="changePW()">🔒 Update Password</button>
+            </div>
+          </div>
+          <div class="col-side">
+            <div class="card">
+              <div class="card-title">Account Info</div>
+              <div id="ap-info"></div>
+            </div>
+            <div class="card">
+              <div class="card-title">🔗 Quick Links</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <a href="index.html" class="btn btn-ghost btn-sm">🌐 View Homepage</a>
+                <a href="products.html" class="btn btn-ghost btn-sm">📦 View Products</a>
+                <a href="contact.html" class="btn btn-ghost btn-sm">📋 View Team Page</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end admin-content -->
+  </main>
+</div><!-- end admin-layout -->
+
 <script src="js/app.js"></script>
 <script>
-var tPhotoB64 = null;
+/* ══════════════════════════════════════════════════
+   STATE
+   ══════════════════════════════════════════════════ */
+var tPhotoB64   = null;
+var currentPane = 'overview';
 
-document.addEventListener('DOMContentLoaded', function() {
+/* ══════════════════════════════════════════════════
+   INIT
+   ══════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', function () {
   if (!Auth.requireAdmin()) return;
-  var u = Auth.getUser();
-  document.getElementById('admin-id').textContent = 'Logged in as ' + u.name;
-  renderKPIs(); renderProducts(); renderUsers(); renderTeam(); renderMsgs(); renderProfile();
+
+  var u  = Auth.getUser();
+  var fu = DB.getUserById(u.id);
+  document.getElementById('admin-greeting').textContent = 'Hi, ' + u.name.split(' ')[0];
+  var av = document.getElementById('admin-avatar');
+  if (u.profileImage) av.innerHTML = '<img src="' + u.profileImage + '">';
+  else av.textContent = u.name.charAt(0).toUpperCase();
+
+  updateBadges();
+  renderOverview();
+  loadSettings();
 });
 
-function tab(name) {
+/* ══════════════════════════════════════════════════
+   PANE NAVIGATION
+   ══════════════════════════════════════════════════ */
+var paneTitles = {
+  overview:'Dashboard', activity:'Activity Log', pending:'Pending Approval',
+  products:'All Listings', users:'All Users', verify:'Verify Students',
+  transactions:'Transaction Monitor', messages:'Messages',
+  team:'Team Members', reports:'Reports', settings:'Settings', profile:'My Profile'
+};
+
+function showPane(name) {
   document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
-  document.querySelectorAll('.admin-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.sidebar-link').forEach(function(l){ l.classList.remove('active'); });
   document.getElementById('pane-' + name).classList.add('active');
-  var idx = {products:0,users:1,team:2,msgs:3,profile:4}[name];
-  document.querySelectorAll('.admin-tab')[idx].classList.add('active');
+  var sl = document.getElementById('sl-' + name);
+  if (sl) sl.classList.add('active');
+  document.getElementById('pane-title').textContent = paneTitles[name] || name;
+  currentPane = name;
+
+  var renders = {
+    overview: renderOverview, activity: renderActivity,
+    pending: renderPending, products: renderProducts,
+    users: renderUsers, verify: renderVerify,
+    transactions: renderTransactions, messages: renderMessages,
+    team: renderTeam, reports: renderReports, profile: renderProfile
+  };
+  if (renders[name]) renders[name]();
 }
 
-function renderKPIs() {
-  var kpis = document.getElementById('kpis');
-  kpis.innerHTML = [
-    [DB.getProducts().length, 'Total Listings'],
-    [DB.getUsers().length,    'Registered Users'],
-    [DB.getTeam().length,     'Team Members'],
-    [DB.getMessages().length, 'Total Messages']
-  ].map(function(k){ return '<div class="admin-kpi"><div class="kn">'+k[0]+'</div><div class="kl">'+k[1]+'</div></div>'; }).join('');
+/* ══════════════════════════════════════════════════
+   BADGES (sidebar notification counts)
+   ══════════════════════════════════════════════════ */
+function updateBadges() {
+  var pending  = DB.getProducts().filter(function(p){ return p.status === 'pending'; }).length;
+  var unverif  = DB.getUsers().filter(function(u){ return u.role === 'student' && !u.verified; }).length;
+  var unreadM  = DB.getMessages().filter(function(m){ return !m.read; }).length;
+
+  setBadge('sb-pending', pending);
+  setBadge('sb-verify',  unverif);
+  setBadge('sb-msgs',    unreadM);
+}
+function setBadge(id, n) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = n;
+  el.style.display = n > 0 ? 'inline-block' : 'none';
 }
 
+/* ══════════════════════════════════════════════════
+   OVERVIEW
+   ══════════════════════════════════════════════════ */
+function renderOverview() {
+  var prods  = DB.getProducts();
+  var users  = DB.getUsers();
+  var txns   = DB.getTransactions();
+  var msgs   = DB.getMessages();
+  var live   = prods.filter(function(p){ return p.status === 'live'; });
+  var pend   = prods.filter(function(p){ return p.status === 'pending'; });
+  var disp   = txns.filter(function(t){ return t.status === 'disputed'; });
+  var total  = txns.reduce(function(s,t){ return s + (t.amount||0); }, 0);
+
+  document.getElementById('kpi-row').innerHTML =
+    kpi('📦', live.length, 'Live Listings', pend.length + ' pending', pend.length > 0 ? 'warn':'', 'kpi-green') +
+    kpi('👥', users.length, 'Registered Users', users.filter(function(u){return u.role==='student';}).length + ' students', 'up', 'kpi-blue') +
+    kpi('💳', txns.length, 'Transactions', formatPrice(total) + ' total value', 'up', 'kpi-amber') +
+    kpi('⚠️', disp.length, 'Disputes', disp.length > 0 ? 'Needs attention' : 'All clear', disp.length > 0 ? 'danger':'up', 'kpi-red');
+
+  // Pending in overview
+  var ovp = document.getElementById('ov-pending');
+  if (!pend.length) { ovp.innerHTML = '<div class="empty" style="padding:24px 0;"><div class="empty-icon" style="font-size:32px;">✅</div><p>All listings are approved.</p></div>'; }
+  else ovp.innerHTML = pend.slice(0, 3).map(approvalCard).join('') + (pend.length > 3 ? '<button class="btn btn-ghost btn-sm" onclick="showPane(\'pending\')">See all ' + pend.length + ' pending →</button>' : '');
+
+  // Disputed transactions
+  var ovd = document.getElementById('ov-disputed');
+  if (!disp.length) { ovd.innerHTML = '<div class="empty" style="padding:24px 0;"><div class="empty-icon" style="font-size:32px;">✅</div><p>No disputes.</p></div>'; }
+  else ovd.innerHTML = disp.map(function(t){ return txnCard(t, true); }).join('');
+
+  // Activity
+  var acts = DB.getActivity();
+  var ova  = document.getElementById('ov-activity');
+  if (!acts.length) { ova.innerHTML = '<div class="empty" style="padding:16px 0;font-size:13px;">No activity yet.</div>'; }
+  else ova.innerHTML = acts.slice(0, 8).map(function(a){ return '<div class="act-item"><div class="act-dot ' + (a.type||'info') + '"></div><div><div class="act-text">' + escHtml(a.action) + ' — ' + escHtml(a.detail) + '</div><div class="act-time">' + formatDateTime(a.date) + '</div></div></div>'; }).join('');
+
+  // Unverified
+  var unv  = DB.getUsers().filter(function(u){ return u.role === 'student' && !u.verified; });
+  var ovu  = document.getElementById('ov-unverified');
+  if (!unv.length) { ovu.innerHTML = '<div class="empty" style="padding:16px 0;font-size:13px;">All students verified.</div>'; }
+  else ovu.innerHTML = unv.slice(0, 4).map(function(u){ return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr);"><div class="user-detail-avatar" style="width:34px;height:34px;font-size:13px;">' + escHtml(u.name.charAt(0)) + '</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">' + escHtml(u.name) + '</div><div style="font-size:11px;color:var(--t3);">' + escHtml(u.email) + '</div></div><button class="btn btn-primary btn-xs" onclick="verifyUser(' + u.id + ',true)">Verify</button></div>'; }).join('') + (unv.length > 4 ? '<button class="btn btn-ghost btn-sm" style="margin-top:10px;" onclick="showPane(\'verify\')">See all ' + unv.length + ' →</button>' : '');
+}
+
+function kpi(icon, num, label, sub, subClass, colorClass) {
+  return '<div class="kpi-card ' + colorClass + '"><div class="kpi-icon">' + icon + '</div><div class="kpi-num">' + num + '</div><div class="kpi-label">' + label + '</div><div class="kpi-sub ' + subClass + '">' + sub + '</div></div>';
+}
+
+/* ══════════════════════════════════════════════════
+   ACTIVITY LOG
+   ══════════════════════════════════════════════════ */
+function renderActivity() {
+  var acts = DB.getActivity();
+  var el   = document.getElementById('activity-full');
+  if (!acts.length) { el.innerHTML = '<div class="empty" style="padding:40px 0;"><div class="empty-icon">📡</div><p>No activity recorded yet.</p></div>'; return; }
+  el.innerHTML = acts.map(function(a) {
+    return '<div class="act-item"><div class="act-dot ' + (a.type||'info') + '"></div><div><div class="act-text"><strong>' + escHtml(a.action) + '</strong> — ' + escHtml(a.detail) + '</div><div class="act-time">' + formatDateTime(a.date) + '</div></div></div>';
+  }).join('');
+}
+function clearActivity() {
+  if (!confirm('Clear all activity logs?')) return;
+  localStorage.removeItem('cm_act');
+  DB.logActivity('Log cleared','Admin cleared the activity log','info');
+  renderActivity();
+  showAlert('Activity log cleared.', 'success');
+}
+
+/* ══════════════════════════════════════════════════
+   PENDING APPROVAL
+   ══════════════════════════════════════════════════ */
+function renderPending() {
+  var pend = DB.getProducts().filter(function(p){ return p.status === 'pending'; });
+  var el   = document.getElementById('pending-list');
+  if (!pend.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">✅</div><p>No listings waiting for approval.</p></div>'; return; }
+  el.innerHTML = pend.map(approvalCard).join('');
+  updateBadges();
+}
+
+function approvalCard(p) {
+  var thumb = p.image
+    ? '<img src="' + p.image + '" class="approval-thumb" style="object-fit:cover;">'
+    : '<div class="approval-thumb" style="background:' + (p.color||'#33A344') + ';">' + (p.emoji||'📦') + '</div>';
+  return '<div class="approval-card">' + thumb +
+    '<div class="approval-info"><h4>' + escHtml(p.name) + '</h4>' +
+    '<p>💰 ' + formatPrice(p.price) + ' &nbsp;|&nbsp; 📂 ' + escHtml(p.category) + ' &nbsp;|&nbsp; ⭐ ' + (CONDITIONS[p.condition]||p.condition) + '</p>' +
+    '<p>👤 ' + escHtml(p.sellerName) + ' &nbsp;|&nbsp; 📞 ' + escHtml(p.sellerPhone) + '</p>' +
+    '<p style="color:var(--t3);font-size:12px;">' + escHtml(p.description.substring(0,100)) + (p.description.length > 100 ? '...' : '') + '</p>' +
+    '<div class="approval-actions">' +
+      '<button class="btn btn-primary btn-sm" onclick="approveProduct(' + p.id + ')">✅ Approve</button>' +
+      '<button class="btn btn-danger btn-sm" onclick="rejectProduct(' + p.id + ')">❌ Reject</button>' +
+    '</div></div></div>';
+}
+
+function approveProduct(id) {
+  var p = DB.getProductById(id);
+  DB.updateProduct(id, { status: 'live' });
+  DB.logActivity('Listing approved', (p ? p.name : 'Product') + ' approved by admin', 'success');
+  showAlert('Listing approved and now live!', 'success');
+  renderPending();
+  updateBadges();
+}
+
+function rejectProduct(id) {
+  var reason = prompt('Reason for rejection (will be logged):');
+  if (reason === null) return;
+  var p = DB.getProductById(id);
+  DB.updateProduct(id, { status: 'rejected', rejectReason: reason });
+  DB.logActivity('Listing rejected', (p ? p.name : 'Product') + ' rejected. Reason: ' + (reason||'none'), 'danger');
+  showAlert('Listing rejected.', 'warn');
+  renderPending();
+  updateBadges();
+}
+
+/* ══════════════════════════════════════════════════
+   ALL LISTINGS
+   ══════════════════════════════════════════════════ */
 function renderProducts() {
-  var q = (document.getElementById('psearch').value || '').toLowerCase();
+  var q    = (document.getElementById('prod-search').value || '').toLowerCase();
   var list = DB.getProducts().filter(function(p){ return !q || p.name.toLowerCase().includes(q) || p.sellerName.toLowerCase().includes(q); });
-  var tb = document.getElementById('ptbody');
-  if (!list.length) { tb.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-3);">No products found.</td></tr>'; return; }
+  var tb   = document.getElementById('prod-tbody');
+  if (!list.length) { tb.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--t3);">No listings found.</td></tr>'; return; }
   tb.innerHTML = list.map(function(p) {
-    var img = p.image ? '<img src="' + p.image + '" alt="">' : '<div style="width:40px;height:40px;background:' + (p.color||'#33A344') + ';border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;">' + (p.emoji||'&#128230;') + '</div>';
-    var st  = p.approved !== false ? '<span class="badge badge-green">Live</span>' : '<span class="badge badge-yellow">Hidden</span>';
-    return '<tr><td>' + img + '</td><td style="font-weight:600;max-width:160px;">' + escHtml(p.name) + '</td><td>' + escHtml(p.category) + '</td><td style="color:var(--green);font-weight:700;">' + formatPrice(p.price) + '</td><td>' + escHtml(p.sellerName) + '</td><td>' + formatDate(p.date) + '</td><td>' + st + '</td><td style="white-space:nowrap;"><button class="btn btn-ghost btn-sm" style="margin-right:4px;" onclick="toggleP(' + p.id + ')">' + (p.approved!==false?'Hide':'Show') + '</button><button class="btn btn-danger btn-sm" onclick="deleteP(' + p.id + ')">&#128465;</button></td></tr>';
+    var img = p.image
+      ? '<img src="' + p.image + '" alt="">'
+      : '<div style="width:40px;height:40px;background:' + (p.color||'#33A344') + ';border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:18px;">' + (p.emoji||'📦') + '</div>';
+    var stMap = {live:'sp-live',pending:'sp-pending',suspended:'sp-suspended',rejected:'sp-suspended'};
+    var st = '<span class="status-pill ' + (stMap[p.status]||'sp-pending') + '">' + (p.status||'pending') + '</span>';
+    return '<tr><td>' + img + '</td>' +
+      '<td style="font-weight:600;max-width:160px;">' + escHtml(p.name) + '</td>' +
+      '<td>' + escHtml(p.category) + '</td>' +
+      '<td style="color:var(--g);font-weight:700;">' + formatPrice(p.price) + '</td>' +
+      '<td>' + escHtml(p.sellerName) + '</td>' +
+      '<td>' + formatDate(p.date) + '</td>' +
+      '<td>' + st + '</td>' +
+      '<td style="white-space:nowrap;">' +
+        (p.status!=='live'   ? '<button class="btn btn-primary btn-xs" style="margin-right:3px;" onclick="setProductStatus(' + p.id + ',\'live\')">✅ Live</button>' : '') +
+        (p.status==='live'   ? '<button class="btn btn-warn btn-xs" style="margin-right:3px;" onclick="setProductStatus(' + p.id + ',\'suspended\')">⏸ Hide</button>' : '') +
+        '<button class="btn btn-danger btn-xs" onclick="deleteProductAdmin(' + p.id + ')">🗑️</button>' +
+      '</td></tr>';
   }).join('');
 }
 
-function toggleP(id) { var p = DB.getProductById(id); if(p) DB.updateProduct(id, {approved: p.approved===false}); renderProducts(); renderKPIs(); }
-function deleteP(id) { if (!confirm('Delete this product?')) return; DB.deleteProduct(id); renderProducts(); renderKPIs(); showAlert('Product deleted.','success'); }
+function setProductStatus(id, status) {
+  var p = DB.getProductById(id);
+  DB.updateProduct(id, { status: status });
+  DB.logActivity('Listing ' + status, (p?p.name:'Product') + ' set to ' + status + ' by admin', status==='live'?'success':'warn');
+  renderProducts(); updateBadges();
+  showAlert('Listing status updated to: ' + status, 'success');
+}
 
+function deleteProductAdmin(id) {
+  if (!confirm('Permanently delete this listing?')) return;
+  var p = DB.getProductById(id);
+  DB.deleteProduct(id);
+  DB.logActivity('Listing deleted', (p?p.name:'Product') + ' deleted by admin', 'danger');
+  renderProducts(); updateBadges(); renderOverview();
+  showAlert('Listing deleted.', 'success');
+}
+
+/* ══════════════════════════════════════════════════
+   ALL USERS
+   ══════════════════════════════════════════════════ */
 function renderUsers() {
-  var tb = document.getElementById('utbody');
-  tb.innerHTML = DB.getUsers().map(function(u) {
-    var role = u.role==='admin' ? '<span class="badge badge-blue">Admin</span>' : '<span class="badge badge-green">Student</span>';
-    var act  = u.role!=='admin' ? '<button class="btn btn-danger btn-sm" onclick="deleteU(' + u.id + ')">&#128465;</button>' : '<span style="font-size:12px;color:var(--text-3);">Protected</span>';
-    return '<tr><td style="font-weight:600;">' + escHtml(u.name) + '</td><td>' + escHtml(u.email) + '</td><td>' + escHtml(u.matricule||'&mdash;') + '</td><td>' + escHtml(u.phone||'&mdash;') + '</td><td>' + role + '</td><td>' + formatDate(u.joinDate) + '</td><td>' + act + '</td></tr>';
+  var q    = (document.getElementById('user-search').value || '').toLowerCase();
+  var list = DB.getUsers().filter(function(u){ return !q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q); });
+  var el   = document.getElementById('users-list');
+  if (!list.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">👥</div><p>No users found.</p></div>'; return; }
+  el.innerHTML = list.map(function(u) {
+    var av = u.profileImage ? '<img src="' + u.profileImage + '">' : escHtml(u.name.charAt(0).toUpperCase());
+    var tags = '';
+    if (u.role === 'admin') tags += '<span class="badge badge-blue" style="margin-left:6px;">Admin</span>';
+    if (u.verified) tags += '<span class="badge badge-green" style="margin-left:4px;">✓ Verified</span>';
+    if (u.status === 'suspended') tags += '<span class="badge badge-red" style="margin-left:4px;">Suspended</span>';
+    var productCount = DB.getProducts().filter(function(p){ return p.sellerId === u.id; }).length;
+    return '<div class="user-detail-card">' +
+      '<div class="user-detail-avatar">' + av + '</div>' +
+      '<div class="user-detail-info">' +
+        '<h4>' + escHtml(u.name) + tags + '</h4>' +
+        '<p>' + escHtml(u.email) + ' &nbsp;|&nbsp; ' + escHtml(u.matricule||'—') + ' &nbsp;|&nbsp; ' + escHtml(u.phone||'—') + '</p>' +
+        '<p style="color:var(--t3);font-size:11px;">Joined ' + formatDate(u.joinDate) + ' &nbsp;|&nbsp; ' + productCount + ' listing(s)</p>' +
+      '</div>' +
+      (u.role !== 'admin' ? '<div class="user-detail-actions">' +
+        (!u.verified ? '<button class="btn btn-primary btn-xs" onclick="verifyUser(' + u.id + ',true)">✅ Verify</button>' : '<button class="btn btn-ghost btn-xs" onclick="verifyUser(' + u.id + ',false)">Unverify</button>') +
+        (u.status !== 'suspended' ? '<button class="btn btn-warn btn-xs" onclick="suspendUser(' + u.id + ')">⏸ Suspend</button>' : '<button class="btn btn-primary btn-xs" onclick="unsuspendUser(' + u.id + ')">▶ Restore</button>') +
+        '<button class="btn btn-danger btn-xs" onclick="deleteUserAdmin(' + u.id + ')">🗑️</button>' +
+      '</div>' : '') +
+    '</div>';
   }).join('');
 }
-function deleteU(id) { if (!confirm('Delete this user and their listings?')) return; DB.deleteUser(id); renderUsers(); renderProducts(); renderKPIs(); showAlert('User deleted.','success'); }
 
+function verifyUser(id, v) {
+  var u = DB.getUserById(id);
+  DB.updateUser(id, { verified: v });
+  DB.logActivity(v?'Student verified':'Student unverified', (u?u.name:'User') + (v?' verified':' unverified') + ' by admin', v?'success':'warn');
+  renderUsers(); renderVerify(); updateBadges(); renderOverview();
+  showAlert((u?u.name:'User') + (v?' is now verified.':" verification removed."), 'success');
+}
+
+function suspendUser(id) {
+  var reason = prompt('Reason for suspension:');
+  if (reason === null) return;
+  var u = DB.getUserById(id);
+  DB.updateUser(id, { status: 'suspended', suspendReason: reason });
+  DB.logActivity('User suspended', (u?u.name:'User') + ' suspended. Reason: ' + (reason||'none'), 'danger');
+  showAlert((u?u.name:'User') + ' has been suspended.', 'warn');
+  renderUsers(); updateBadges();
+}
+
+function unsuspendUser(id) {
+  var u = DB.getUserById(id);
+  DB.updateUser(id, { status: 'active', suspendReason: '' });
+  DB.logActivity('User restored', (u?u.name:'User') + ' suspension lifted by admin', 'success');
+  showAlert((u?u.name:'User') + ' account restored.', 'success');
+  renderUsers();
+}
+
+function deleteUserAdmin(id) {
+  if (!confirm('Delete this user and all their listings?')) return;
+  var u = DB.getUserById(id);
+  DB.deleteUser(id);
+  DB.logActivity('User deleted', (u?u.name:'User') + ' deleted by admin', 'danger');
+  renderUsers(); updateBadges(); renderOverview();
+  showAlert('User deleted.', 'success');
+}
+
+/* ══════════════════════════════════════════════════
+   VERIFY STUDENTS
+   ══════════════════════════════════════════════════ */
+function renderVerify() {
+  var unv = DB.getUsers().filter(function(u){ return u.role==='student' && !u.verified; });
+  var el  = document.getElementById('verify-list');
+  if (!unv.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">✅</div><p>All registered students are verified.</p></div>'; return; }
+  el.innerHTML = unv.map(function(u) {
+    return '<div class="user-detail-card">' +
+      '<div class="user-detail-avatar">' + escHtml(u.name.charAt(0)) + '</div>' +
+      '<div class="user-detail-info"><h4>' + escHtml(u.name) + '</h4><p>' + escHtml(u.email) + ' &nbsp;|&nbsp; Matricule: <strong>' + escHtml(u.matricule||'—') + '</strong></p><p style="font-size:11px;color:var(--t3);">Registered ' + formatDate(u.joinDate) + '</p></div>' +
+      '<div class="user-detail-actions">' +
+        '<button class="btn btn-primary btn-sm" onclick="verifyUser(' + u.id + ',true)">✅ Verify</button>' +
+        '<button class="btn btn-danger btn-sm" onclick="deleteUserAdmin(' + u.id + ')">🗑️ Reject</button>' +
+      '</div></div>';
+  }).join('');
+  updateBadges();
+}
+
+/* ══════════════════════════════════════════════════
+   TRANSACTIONS
+   ══════════════════════════════════════════════════ */
+function renderTransactions() {
+  var filter = document.getElementById('txn-filter').value;
+  var txns   = DB.getTransactions().filter(function(t){ return !filter || t.status === filter; });
+  var el     = document.getElementById('txn-list');
+  if (!txns.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">💳</div><p>No transactions found.</p></div>'; return; }
+  el.innerHTML = txns.slice().reverse().map(function(t){ return txnCard(t, false); }).join('');
+}
+
+function txnCard(t, compact) {
+  var stMap = { pending:'sp-pending', confirmed:'sp-live', disputed:'sp-suspended', cancelled:'sp-suspended' };
+  var st    = '<span class="status-pill ' + (stMap[t.status]||'sp-pending') + '">' + (t.status||'pending') + '</span>';
+  var actions = '<div class="txn-actions">' +
+    (t.status==='pending'  ? '<button class="btn btn-primary btn-sm" onclick="setTxnStatus(\'' + t.id + '\',\'confirmed\')">✅ Confirm</button>' : '') +
+    (t.status!=='disputed' && t.status!=='cancelled' ? '<button class="btn btn-warn btn-sm" onclick="setTxnStatus(\'' + t.id + '\',\'disputed\')">⚠️ Mark Disputed</button>' : '') +
+    (t.status==='disputed' ? '<button class="btn btn-primary btn-sm" onclick="setTxnStatus(\'' + t.id + '\',\'confirmed\')">✅ Resolve</button>' : '') +
+    (t.status!=='cancelled'? '<button class="btn btn-danger btn-sm" onclick="setTxnStatus(\'' + t.id + '\',\'cancelled\')">✖ Cancel</button>' : '') +
+    '<button class="btn btn-danger btn-sm" onclick="deleteTxn(\'' + t.id + '\')">🗑️</button>' +
+  '</div>';
+  return '<div class="txn-card">' +
+    '<div class="txn-header"><span class="txn-id">TXN# ' + escHtml(t.id) + '</span>' + st + '</div>' +
+    '<div class="txn-body">' +
+      '<div class="txn-field"><div class="txn-field-label">Product</div><div class="txn-field-value">' + escHtml(t.productName) + '</div></div>' +
+      '<div class="txn-field"><div class="txn-field-label">Amount</div><div class="txn-field-value" style="color:var(--g);">' + formatPrice(t.amount) + '</div></div>' +
+      '<div class="txn-field"><div class="txn-field-label">Buyer</div><div class="txn-field-value">' + escHtml(t.buyerName) + '</div></div>' +
+      '<div class="txn-field"><div class="txn-field-label">Seller</div><div class="txn-field-value">' + escHtml(t.sellerName) + '</div></div>' +
+      '<div class="txn-field"><div class="txn-field-label">Date</div><div class="txn-field-value">' + formatDate(t.date) + '</div></div>' +
+    '</div>' +
+    (t.note ? '<div class="txn-note">📝 ' + escHtml(t.note) + '</div>' : '') +
+    (compact ? '' : actions) +
+  '</div>';
+}
+
+function setTxnStatus(id, status) {
+  var t = DB.getTransactions().find(function(x){ return x.id===id; });
+  if (status === 'disputed') {
+    var note = prompt('Describe the dispute:');
+    if (note === null) return;
+    DB.updateTransaction(id, { status: status, note: note });
+  } else {
+    DB.updateTransaction(id, { status: status });
+  }
+  DB.logActivity('Transaction ' + status, 'TXN# ' + id + ' marked as ' + status, status==='confirmed'?'success':status==='disputed'?'danger':'warn');
+  renderTransactions(); renderOverview();
+  showAlert('Transaction updated to: ' + status, 'success');
+}
+
+function deleteTxn(id) {
+  if (!confirm('Delete this transaction record?')) return;
+  DB.deleteTransaction(id);
+  renderTransactions(); renderOverview();
+  showAlert('Transaction deleted.', 'success');
+}
+
+function openNewTxn() { document.getElementById('txn-form-wrap').style.display = 'block'; }
+function closeTxnForm(){ document.getElementById('txn-form-wrap').style.display = 'none'; }
+
+function saveTxn() {
+  var prod   = document.getElementById('tf-prod').value.trim();
+  var amt    = document.getElementById('tf-amt').value.trim();
+  var buyer  = document.getElementById('tf-buyer').value.trim();
+  var seller = document.getElementById('tf-seller').value.trim();
+  var note   = document.getElementById('tf-note').value.trim();
+  if (!prod || !amt || !buyer || !seller) { showAlert('Please fill all required fields.','error'); return; }
+  var txn = { id:'TXN' + Date.now(), productId:0, productName:prod, buyerName:buyer, buyerId:0, sellerName:seller, sellerId:0, amount:parseInt(amt), status:'pending', date:new Date().toISOString(), note:note };
+  DB.addTransaction(txn);
+  DB.logActivity('Transaction logged', prod + ' — ' + buyer + ' → ' + seller + ' (' + formatPrice(amt) + ')', 'info');
+  ['tf-prod','tf-amt','tf-buyer','tf-seller','tf-note'].forEach(function(id){ document.getElementById(id).value=''; });
+  closeTxnForm(); renderTransactions(); renderOverview();
+  showAlert('Transaction logged successfully.', 'success');
+}
+
+/* ══════════════════════════════════════════════════
+   MESSAGES
+   ══════════════════════════════════════════════════ */
+function renderMessages() {
+  var msgs = DB.getMessages().slice().reverse();
+  var el   = document.getElementById('msgs-list');
+  if (!msgs.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📬</div><p>No messages on the platform.</p></div>'; return; }
+  el.innerHTML = msgs.map(function(m) {
+    var p  = DB.getProductById(m.productId);
+    var to = DB.getUserById(m.toId);
+    return '<div class="msg-card ' + (m.read?'':'unread') + '">' +
+      '<div class="msg-meta">From <strong>' + escHtml(m.fromName) + '</strong> &rarr; <strong>' + escHtml(to?to.name:'User #'+m.toId) + '</strong> &nbsp;|&nbsp; Re: <em>' + escHtml(p?p.name:'Unknown product') + '</em> &nbsp;|&nbsp; ' + formatDateTime(m.date) + (!m.read?' &nbsp;<span class="badge badge-green">New</span>':'') + '</div>' +
+      '<div class="msg-body">' + escHtml(m.text) + '</div>' +
+      '<button class="btn btn-danger btn-xs" style="margin-top:8px;" onclick="deleteMsg(\'' + m.id + '\')">🗑️ Delete</button>' +
+    '</div>';
+  }).join('');
+  updateBadges();
+}
+function deleteMsg(id) {
+  DB.deleteMessage(id);
+  renderMessages();
+}
+
+/* ══════════════════════════════════════════════════
+   TEAM MEMBERS
+   ══════════════════════════════════════════════════ */
 function renderTeam() {
   var team = DB.getTeam();
   var el   = document.getElementById('team-table');
-  if (!team.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">&#128101;</div><p>No team members yet. Add one above.</p></div>'; return; }
-  el.innerHTML = '<div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Photo</th><th>Name</th><th>Role</th><th>Actions</th></tr></thead><tbody>'
-    + team.map(function(m) {
-        var av = m.photo ? '<img src="' + m.photo + '" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">' : '<div class="user-avatar" style="width:40px;height:40px;">' + escHtml(m.name.charAt(0)) + '</div>';
-        return '<tr><td>' + av + '</td><td style="font-weight:600;">' + escHtml(m.name) + '</td><td>' + escHtml(m.role) + '</td><td style="white-space:nowrap;"><button class="btn btn-ghost btn-sm" style="margin-right:4px;" onclick="editTeam(' + m.id + ')">&#9998; Edit</button><button class="btn btn-danger btn-sm" onclick="rmTeam(' + m.id + ')">&#128465;</button></td></tr>';
-      }).join('')
-    + '</tbody></table></div>';
+  if (!team.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">👥</div><p>No team members yet.</p></div>'; return; }
+  el.innerHTML = '<div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Photo</th><th>Name</th><th>Role</th><th>Actions</th></tr></thead><tbody>' +
+    team.map(function(m) {
+      var av = m.photo
+        ? '<img src="' + m.photo + '" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">'
+        : '<div class="user-detail-avatar" style="width:40px;height:40px;">' + escHtml(m.name.charAt(0)) + '</div>';
+      return '<tr><td>' + av + '</td><td style="font-weight:600;">' + escHtml(m.name) + '</td><td>' + escHtml(m.role) + '</td><td style="white-space:nowrap;"><button class="btn btn-ghost btn-xs" style="margin-right:4px;" onclick="editTeam(' + m.id + ')">✏️ Edit</button><button class="btn btn-danger btn-xs" onclick="rmTeam(' + m.id + ')">🗑️</button></td></tr>';
+    }).join('') +
+  '</tbody></table></div>';
 }
+
 function saveTeam() {
-  var name=document.getElementById('t-name').value.trim(), role=document.getElementById('t-role').value.trim(), eid=parseInt(document.getElementById('t-eid').value)||0;
-  if (!name||!role) { showAlert('Please fill in name and role.','error'); return; }
-  if (eid) { DB.updateTeamMember(eid, {name:name, role:role, photo: tPhotoB64!==null ? tPhotoB64 : DB.getTeam().find(function(m){return m.id===eid;})||{photo:null}).photo}); showAlert('Member updated.','success'); }
-  else { DB.addTeamMember({id:uid(), name:name, role:role, photo:tPhotoB64}); showAlert('Member added.','success'); }
-  cancelTeam(); renderTeam(); renderKPIs();
+  var name = document.getElementById('t-name').value.trim();
+  var role = document.getElementById('t-role').value.trim();
+  var eid  = parseInt(document.getElementById('t-eid').value) || 0;
+  if (!name || !role) { showAlert('Please fill in name and role.', 'error'); return; }
+  if (eid) {
+    var existing = DB.getTeam().find(function(m){ return m.id===eid; });
+    DB.updateTeamMember(eid, { name:name, role:role, photo: tPhotoB64 !== null ? tPhotoB64 : (existing ? existing.photo : null) });
+    showAlert('Team member updated.', 'success');
+  } else {
+    DB.addTeamMember({ id: Date.now(), name:name, role:role, photo:tPhotoB64 });
+    DB.logActivity('Team member added', name + ' added to project team', 'info');
+    showAlert('Team member added.', 'success');
+  }
+  cancelTeam(); renderTeam();
 }
+
 function editTeam(id) {
-  var m = DB.getTeam().find(function(x){return x.id===id;});
+  var m = DB.getTeam().find(function(x){ return x.id===id; });
   if (!m) return;
   document.getElementById('t-eid').value  = m.id;
   document.getElementById('t-name').value = m.name;
   document.getElementById('t-role').value = m.role;
-  document.getElementById('tform-title').textContent = 'Edit Team Member';
+  document.getElementById('team-form-title').textContent = '✏️ Edit Team Member';
   tPhotoB64 = m.photo || null;
   if (m.photo) document.getElementById('t-photo-prev').innerHTML = '<img src="' + m.photo + '" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">';
-  document.getElementById('team-form').scrollIntoView({behavior:'smooth'});
+  document.getElementById('team-form').scrollIntoView({ behavior:'smooth' });
 }
+
 function cancelTeam() {
   document.getElementById('t-eid').value=''; document.getElementById('t-name').value=''; document.getElementById('t-role').value='';
-  document.getElementById('tform-title').textContent='Add Team Member';
-  document.getElementById('t-photo-prev').innerHTML='<div style="font-size:28px;">&#128247;</div><p>Click to upload</p>';
-  tPhotoB64=null;
+  document.getElementById('team-form-title').textContent='➕ Add Team Member';
+  document.getElementById('t-photo-prev').innerHTML='<div style="font-size:28px;">📷</div><p>Click to upload</p>';
+  tPhotoB64 = null;
 }
-function rmTeam(id) { if (!confirm('Remove this member?')) return; DB.deleteTeamMember(id); renderTeam(); renderKPIs(); }
-function prevTeamPhoto(inp) { readImage(inp.files[0], function(b){ if(!b)return; tPhotoB64=b; document.getElementById('t-photo-prev').innerHTML='<img src="'+b+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">'; }); }
 
-function renderMsgs() {
-  var msgs = DB.getMessages().slice().reverse();
-  var el   = document.getElementById('msgs-list');
-  if (!msgs.length) { el.innerHTML='<div class="empty"><div class="empty-icon">&#128235;</div><p>No messages yet.</p></div>'; return; }
-  el.innerHTML = msgs.map(function(m) {
-    var p = DB.getProductById(m.productId);
-    var pn = p ? p.name : 'Unknown';
-    var to = DB.getUserById(m.toId);
-    return '<div class="msg-card ' + (m.read?'':'unread') + '"><div class="msg-meta">From <strong>' + escHtml(m.fromName) + '</strong> &rarr; <strong>' + escHtml(to?to.name:'?') + '</strong> &middot; Re: <em>' + escHtml(pn) + '</em> &middot; ' + formatDate(m.date) + (m.read?'':' <span class="badge badge-green">New</span>') + '</div><div class="msg-body">' + escHtml(m.text) + '</div><button class="btn btn-danger btn-sm" style="margin-top:8px;" onclick="delMsg(' + m.id + ')">&#128465; Delete</button></div>';
+function rmTeam(id) {
+  if (!confirm('Remove this team member?')) return;
+  DB.deleteTeamMember(id); renderTeam();
+  showAlert('Team member removed.', 'success');
+}
+
+function prevTeamPhoto(inp) {
+  readImage(inp.files[0], function(b) {
+    if (!b) return; tPhotoB64 = b;
+    document.getElementById('t-photo-prev').innerHTML = '<img src="' + b + '" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">';
+  });
+}
+
+/* ══════════════════════════════════════════════════
+   REPORTS
+   ══════════════════════════════════════════════════ */
+function renderReports() {
+  var prods  = DB.getProducts();
+  var txns   = DB.getTransactions();
+  var users  = DB.getUsers();
+
+  // Category breakdown
+  var cats   = {};
+  prods.forEach(function(p){ cats[p.category] = (cats[p.category]||0) + 1; });
+  var maxCat = Math.max.apply(null, Object.values(cats).concat([1]));
+  var catEl  = document.getElementById('report-cats');
+  catEl.innerHTML = Object.keys(cats).map(function(c) {
+    var pct = Math.round((cats[c]/maxCat)*100);
+    return '<div class="chart-bar-row"><div class="chart-bar-label">' + c + '</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:' + pct + '%">' + (pct > 20 ? cats[c] : '') + '</div></div><div class="chart-bar-val">' + cats[c] + ' items</div></div>';
+  }).join('') || '<p style="color:var(--t3);font-size:13px;">No data yet.</p>';
+
+  // Transaction summary
+  var txnEl   = document.getElementById('report-txns');
+  var confirmed = txns.filter(function(t){return t.status==='confirmed';});
+  var disputed  = txns.filter(function(t){return t.status==='disputed';});
+  var totalVal  = confirmed.reduce(function(s,t){return s+(t.amount||0);},0);
+  txnEl.innerHTML = [
+    ['Total Transactions', txns.length],
+    ['Confirmed', confirmed.length],
+    ['Pending', txns.filter(function(t){return t.status==='pending';}).length],
+    ['Disputed', disputed.length],
+    ['Cancelled', txns.filter(function(t){return t.status==='cancelled';}).length],
+    ['Total Confirmed Value', formatPrice(totalVal)]
+  ].map(function(r){
+    return '<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--bdr);font-size:13.5px;"><span style="color:var(--t2);">' + r[0] + '</span><strong style="color:var(--t1);">' + r[1] + '</strong></div>';
   }).join('');
-}
-function delMsg(id) { DB.saveMessages(DB.getMessages().filter(function(m){return m.id!==id;})); renderMsgs(); renderKPIs(); }
 
+  // Platform summary
+  var sumEl = document.getElementById('report-summary');
+  var live  = prods.filter(function(p){return p.status==='live';});
+  var pend  = prods.filter(function(p){return p.status==='pending';});
+  sumEl.innerHTML = [
+    ['Total Users', users.length],
+    ['Students', users.filter(function(u){return u.role==='student';}).length],
+    ['Verified Students', users.filter(function(u){return u.role==='student'&&u.verified;}).length],
+    ['Suspended Users', users.filter(function(u){return u.status==='suspended';}).length],
+    ['Total Listings', prods.length],
+    ['Live Listings', live.length],
+    ['Pending Listings', pend.length],
+    ['Total Messages', DB.getMessages().length]
+  ].map(function(r){
+    return '<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--bdr);font-size:13.5px;"><span style="color:var(--t2);">' + r[0] + '</span><strong style="color:var(--t1);">' + r[1] + '</strong></div>';
+  }).join('');
+
+  // Top sellers
+  var sellerMap = {};
+  prods.forEach(function(p){ sellerMap[p.sellerName] = (sellerMap[p.sellerName]||0) + 1; });
+  var sellers = Object.keys(sellerMap).sort(function(a,b){return sellerMap[b]-sellerMap[a];}).slice(0,5);
+  var maxSel  = sellerMap[sellers[0]] || 1;
+  document.getElementById('report-sellers').innerHTML = sellers.length
+    ? sellers.map(function(s,i) {
+        var pct = Math.round((sellerMap[s]/maxSel)*100);
+        return '<div class="chart-bar-row"><div class="chart-bar-label">' + s.split(' ')[0] + '</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:' + pct + '%;">' + (pct>20?sellerMap[s]:'') + '</div></div><div class="chart-bar-val">' + sellerMap[s] + ' listed</div></div>';
+      }).join('')
+    : '<p style="color:var(--t3);font-size:13px;">No listings yet.</p>';
+}
+
+/* ══════════════════════════════════════════════════
+   SETTINGS
+   ══════════════════════════════════════════════════ */
+function loadSettings() {
+  var s = DB.getSettings();
+  if (document.getElementById('s-approval')) document.getElementById('s-approval').checked = s.require_approval !== false;
+  if (document.getElementById('s-register')) document.getElementById('s-register').checked  = s.allow_register  !== false;
+  if (document.getElementById('s-public'))   document.getElementById('s-public').checked    = s.public_browse   !== false;
+  if (document.getElementById('s-verifyreq'))document.getElementById('s-verifyreq').checked = !!s.verify_required;
+}
+
+function saveSetting(key, val) {
+  DB.saveSetting(key, val);
+  showAlert('Setting saved: ' + key.replace('_',' '), 'success');
+  DB.logActivity('Setting changed', key + ' set to ' + val + ' by admin', 'info');
+}
+
+function resetData() {
+  if (!confirm('This will clear all data and restore demo products and users. Continue?')) return;
+  var keys = ['cm_u','cm_p','cm_t','cm_m','cm_tx','cm_act'];
+  keys.forEach(function(k){ localStorage.removeItem(k); });
+  DB.init();
+  showAlert('Demo data restored.', 'success');
+  renderOverview();
+  updateBadges();
+}
+
+/* ══════════════════════════════════════════════════
+   PROFILE
+   ══════════════════════════════════════════════════ */
 function renderProfile() {
   var u  = Auth.getUser();
-  var fu = DB.getUserById(u.id); if (!fu) return;
+  var fu = DB.getUserById(u.id);
+  if (!fu) return;
   document.getElementById('ap-name').value  = fu.name  || '';
   document.getElementById('ap-phone').value = fu.phone || '';
   var d = document.getElementById('ap-display');
   d.innerHTML = fu.profileImage ? '<img src="' + fu.profileImage + '">' : escHtml(fu.name.charAt(0));
   document.getElementById('ap-info').innerHTML =
-    '<div class="contact-row"><div class="ci-icon">&#128100;</div><div><div class="ci-label">Name</div><div class="ci-value">' + escHtml(fu.name) + '</div></div></div>'
-    + '<div class="contact-row"><div class="ci-icon">&#128231;</div><div><div class="ci-label">Email</div><div class="ci-value">' + escHtml(fu.email) + '</div></div></div>'
-    + '<div class="contact-row"><div class="ci-icon">&#128222;</div><div><div class="ci-label">Phone</div><div class="ci-value">' + escHtml(fu.phone||'&mdash;') + '</div></div></div>'
-    + '<div class="contact-row"><div class="ci-icon">&#128737;</div><div><div class="ci-label">Role</div><div class="ci-value"><span class="badge badge-blue">Administrator</span></div></div></div>';
+    '<div class="contact-row"><div class="ci-icon">👤</div><div><div class="ci-label">Name</div><div class="ci-value">' + escHtml(fu.name) + '</div></div></div>' +
+    '<div class="contact-row"><div class="ci-icon">📧</div><div><div class="ci-label">Email</div><div class="ci-value">' + escHtml(fu.email) + '</div></div></div>' +
+    '<div class="contact-row"><div class="ci-icon">📞</div><div><div class="ci-label">Phone</div><div class="ci-value">' + escHtml(fu.phone||'—') + '</div></div></div>' +
+    '<div class="contact-row"><div class="ci-icon">🛡️</div><div><div class="ci-label">Role</div><div class="ci-value"><span class="badge badge-blue">Administrator</span></div></div></div>';
+
+  // Update avatar in topbar
+  var av = document.getElementById('admin-avatar');
+  if (fu.profileImage) av.innerHTML = '<img src="' + fu.profileImage + '">';
+  else av.textContent = fu.name.charAt(0).toUpperCase();
 }
+
 function uploadAdminPhoto(inp) {
   readImage(inp.files[0], function(b64) {
     if (!b64) return;
     var u = Auth.getUser();
-    DB.updateUser(u.id, {profileImage:b64});
+    DB.updateUser(u.id, { profileImage: b64 });
     var s = DB.getSession(); s.profileImage = b64; DB.setSession(s);
-    renderProfile(); updateNavbar(); showAlert('Photo updated!','success');
+    renderProfile();
+    showAlert('Profile photo updated!', 'success');
+    DB.logActivity('Profile photo updated', 'Admin updated their profile photo', 'info');
   });
 }
+
 function saveAdminInfo() {
-  var name = document.getElementById('ap-name').value.trim(), phone = document.getElementById('ap-phone').value.trim();
-  if (!name) { showAlert('Name cannot be empty.','error'); return; }
+  var name  = document.getElementById('ap-name').value.trim();
+  var phone = document.getElementById('ap-phone').value.trim();
+  if (!name) { showAlert('Name cannot be empty.', 'error'); return; }
   var u = Auth.getUser();
-  DB.updateUser(u.id, {name:name, phone:phone});
+  DB.updateUser(u.id, { name:name, phone:phone });
   var s = DB.getSession(); s.name = name; DB.setSession(s);
-  renderProfile(); updateNavbar(); showAlert('Profile saved!','success');
+  document.getElementById('admin-greeting').textContent = 'Hi, ' + name.split(' ')[0];
+  renderProfile();
+  showAlert('Profile saved!', 'success');
 }
+
 function changePW() {
-  var cur = document.getElementById('cp-cur').value, nw = document.getElementById('cp-new').value, con = document.getElementById('cp-con').value;
-  if (!cur||!nw||!con) { showAlert('Fill in all password fields.','error'); return; }
-  var u = Auth.getUser(), fu = DB.getUserById(u.id);
-  if (!fu || fu.password !== cur) { showAlert('Current password is incorrect.','error'); return; }
-  if (nw !== con) { showAlert('New passwords do not match.','error'); return; }
-  if (nw.length < 6) { showAlert('Password must be at least 6 characters.','error'); return; }
-  DB.updateUser(u.id, {password:nw});
-  document.getElementById('cp-cur').value = document.getElementById('cp-new').value = document.getElementById('cp-con').value = '';
-  showAlert('Password changed!','success');
+  var cur = document.getElementById('cp-cur').value;
+  var nw  = document.getElementById('cp-new').value;
+  var con = document.getElementById('cp-con').value;
+  if (!cur||!nw||!con) { showAlert('Fill in all password fields.', 'error'); return; }
+  var u  = Auth.getUser();
+  var fu = DB.getUserById(u.id);
+  if (!fu || fu.password !== cur) { showAlert('Current password is incorrect.', 'error'); return; }
+  if (nw !== con) { showAlert('New passwords do not match.', 'error'); return; }
+  if (nw.length < 6) { showAlert('Password must be at least 6 characters.', 'error'); return; }
+  DB.updateUser(u.id, { password: nw });
+  ['cp-cur','cp-new','cp-con'].forEach(function(id){ document.getElementById(id).value=''; });
+  showAlert('Password changed successfully!', 'success');
+  DB.logActivity('Password changed', 'Admin changed their password', 'info');
 }
 </script>
-</body></html>
+</body>
+</html>

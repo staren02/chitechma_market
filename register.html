@@ -1,65 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chitechma Marketplace &mdash; Register</title>
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body><header class="topbar">
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Chitechma &mdash; Register</title><link rel="stylesheet" href="css/style.css"></head><body>
+<header class="topbar">
   <a href="index.html" class="topbar-logo">
     <img src="images/logo.png" alt="Chitechma Logo">
-    <div><div class="logo-name">Chitechma University</div><div class="logo-sub">Student Marketplace · Buea</div></div>
+    <div><div class="logo-name">Chitechma University</div><div class="logo-sub">Student Marketplace &middot; Buea</div></div>
   </a>
-  <nav class="topbar-nav"><a href="index.html">Home</a><a href="products.html">Products</a><a href="sell.html">Sell Item</a><a href="dashboard.html">Dashboard</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav>
+  <nav class="topbar-nav">
+    <a href="index.html" id="nl-home">Home</a>
+    <a href="products.html" id="nl-products">Products</a>
+    <a href="sell.html" id="nl-sell">Sell Item</a>
+    <a href="dashboard.html" id="nl-dashboard">Dashboard</a>
+    <a href="about.html" id="nl-about">About</a>
+    <a href="contact.html" id="nl-contact">Contact</a>
+  </nav>
   <div id="nav-user-desktop"></div>
   <button class="nav-toggle" onclick="toggleMobileNav()">&#9776;</button>
 </header>
 <div class="nav-overlay" id="nav-overlay" onclick="closeMobileNav()"></div>
 <div class="mobile-nav-panel" id="mobile-nav-panel">
-  <div class="mnp-head">
-    <span class="brand">&#127891; Chitechma Marketplace</span>
-    <button class="mnp-close" onclick="closeMobileNav()">&#10005;</button>
+  <div class="mnp-head"><span class="brand">&#127891; Menu</span><button class="mnp-close" onclick="closeMobileNav()">&#10005;</button></div>
+  <div class="mnp-links">
+    <a href="index.html" id="ml-home">&#127968; Home</a>
+    <a href="products.html" id="ml-products">&#128717; Products</a>
+    <a href="sell.html" id="ml-sell">&#128230; Sell Item</a>
+    <a href="dashboard.html" id="ml-dashboard">&#128203; Dashboard</a>
+    <a href="about.html" id="ml-about">&#8505; About</a>
+    <a href="contact.html" id="ml-contact">&#128222; Contact</a>
   </div>
-  <div class="mnp-links"><a href="index.html">Home</a><a href="products.html">Products</a><a href="sell.html">Sell Item</a><a href="dashboard.html">Dashboard</a><a href="about.html">About</a><a href="contact.html">Contact</a></div>
   <div id="nav-user-mobile"></div>
 </div>
-<div class="auth-page">
-  <div class="auth-card" style="max-width:460px;">
-    <img src="images/logo.png" alt="Logo" class="auth-logo">
-    <div class="auth-title">Create account</div>
-    <div class="auth-subtitle">Register to buy and sell on the Chitechma Marketplace</div>
-    <div id="alert-box"></div>
-    <div class="form-row">
-      <div class="form-group"><label>Full Name *</label><input class="form-control" type="text" id="name" placeholder="Jean Mballa"></div>
-      <div class="form-group"><label>Matricule *</label><input class="form-control" type="text" id="mat" placeholder="CHI/2024/001"></div>
-    </div>
-    <div class="form-group"><label>Email *</label><input class="form-control" type="email" id="email" placeholder="student@chitechma.cm"></div>
-    <div class="form-group"><label>Phone / WhatsApp *</label><input class="form-control" type="tel" id="phone" placeholder="677 123 456"></div>
-    <div class="form-row">
-      <div class="form-group"><label>Password *</label><input class="form-control" type="password" id="pw" placeholder="Min 6 chars"></div>
-      <div class="form-group"><label>Confirm *</label><input class="form-control" type="password" id="pw2" placeholder="Repeat"></div>
-    </div>
-    <button class="btn btn-primary btn-block" onclick="doReg()" style="margin-bottom:16px;">Create Account</button>
-    <p style="font-size:13px;color:var(--text-2);">Have an account? <a href="login.html" style="color:var(--green);font-weight:600;">Login</a></p>
+<div class="auth-page"><div class="auth-card" style="max-width:460px;">
+  <img src="images/logo.png" alt="Logo" class="auth-logo">
+  <div class="auth-title">Create account</div>
+  <div class="auth-subtitle">Register to buy and sell on the Chitechma Marketplace</div>
+  <div id="alert-box"></div>
+  <div class="form-row">
+    <div class="form-group"><label>Full Name *</label><input class="form-control" type="text" id="nm" placeholder="Jean Mballa"></div>
+    <div class="form-group"><label>Matricule *</label><input class="form-control" type="text" id="mt" placeholder="CHI/2024/001"></div>
   </div>
-</div>
+  <div class="form-group"><label>Email *</label><input class="form-control" type="email" id="em" placeholder="student@chitechma.cm"></div>
+  <div class="form-group"><label>Phone / WhatsApp *</label><input class="form-control" type="tel" id="ph" placeholder="677 123 456"></div>
+  <div class="form-row">
+    <div class="form-group"><label>Password *</label><input class="form-control" type="password" id="pw" placeholder="Min 6 chars"></div>
+    <div class="form-group"><label>Confirm *</label><input class="form-control" type="password" id="pw2" placeholder="Repeat"></div>
+  </div>
+  <button class="btn btn-primary btn-block" onclick="doReg()" style="margin-bottom:16px;">Create Account</button>
+  <p style="font-size:13px;color:var(--t2);">Have an account? <a href="login.html" style="color:var(--g);font-weight:600;">Login</a></p>
+</div></div>
 <footer>
   <p class="footer-brand">Chitechma University Institute</p>
   <p>Student Marketplace &mdash; Buea, Cameroon</p>
   <p style="margin-top:8px;"><a href="about.html">About</a> &nbsp;&bull;&nbsp; <a href="contact.html">Contact</a></p>
 </footer>
 <script src="js/app.js"></script>
-<script>
-function doReg(){
-  var n=document.getElementById("name").value.trim(), m=document.getElementById("mat").value.trim(),
-      e=document.getElementById("email").value.trim(), p=document.getElementById("phone").value.trim(),
-      pw=document.getElementById("pw").value, pw2=document.getElementById("pw2").value;
-  if(!n||!m||!e||!p||!pw){showAlert("Please fill all required fields.","error");return;}
-  if(pw!==pw2){showAlert("Passwords do not match.","error");return;}
-  var r=Auth.register({name:n,matricule:m,email:e,phone:p,password:pw});
-  if(r.success){showAlert("Account created! Redirecting...","success");setTimeout(function(){window.location.href="login.html";},1400);}
-  else showAlert(r.msg,"error");
-}
-</script>
+<script>function doReg(){var n=document.getElementById("nm").value.trim(),m=document.getElementById("mt").value.trim(),e=document.getElementById("em").value.trim(),p=document.getElementById("ph").value.trim(),pw=document.getElementById("pw").value,pw2=document.getElementById("pw2").value;if(!n||!m||!e||!p||!pw){showAlert("Please fill all required fields.","error");return;}if(pw!==pw2){showAlert("Passwords do not match.","error");return;}var r=Auth.register({name:n,matricule:m,email:e,phone:p,password:pw});if(r.success){showAlert("Account created! Redirecting...","success");setTimeout(function(){window.location.href="login.html";},1400);}else showAlert(r.msg,"error");}</script>
 </body></html>
