@@ -1,128 +1,65 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chitechma Marketplace &mdash; Home</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <header class="topbar">
-      <a href="index.html" class="topbar-logo">
-        <img src="images/logo.png" alt="Chitechma Logo" />
-        <div>
-          <div class="logo-name">Chitechma University</div>
-          <div class="logo-sub">Student Marketplace · Buea</div>
-        </div>
-      </a>
-      <nav class="topbar-nav">
-        <a href="index.html" class="active">Home</a
-        ><a href="products.html">Products</a><a href="sell.html">Sell Item</a
-        ><a href="dashboard.html">Dashboard</a><a href="about.html">About</a
-        ><a href="contact.html">Contact</a>
-      </nav>
-      <div id="nav-user-desktop"></div>
-      <button class="nav-toggle" onclick="toggleMobileNav()">&#9776;</button>
-    </header>
-    <div class="nav-overlay" id="nav-overlay" onclick="closeMobileNav()"></div>
-    <div class="mobile-nav-panel" id="mobile-nav-panel">
-      <div class="mnp-head">
-        <span class="brand">&#127891; Chitechma Marketplace</span>
-        <button class="mnp-close" onclick="closeMobileNav()">&#10005;</button>
-      </div>
-      <div class="mnp-links">
-        <a href="index.html" class="active">Home</a
-        ><a href="products.html">Products</a><a href="sell.html">Sell Item</a
-        ><a href="dashboard.html">Dashboard</a><a href="about.html">About</a
-        ><a href="contact.html">Contact</a>
-      </div>
-      <div id="nav-user-mobile"></div>
-    </div>
-    <div class="hero">
-      <h1>The Chitechma Student Marketplace</h1>
-      <p>
-        Buy and sell items with fellow Chitechma students. Textbooks,
-        electronics, clothing and more &mdash; all in one place.
-      </p>
-      <div class="hero-btns">
-        <a href="login.html" class="btn btn-white"
-          >&#128273; Login to Dashboard</a
-        >
-        <a href="products.html" class="btn btn-outline"
-          >&#128717; Browse Products</a
-        >
-      </div>
-    </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chitechma Marketplace &mdash; Home</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body><header class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <img src="images/logo.png" alt="Chitechma Logo">
+    <div><div class="logo-name">Chitechma University</div><div class="logo-sub">Student Marketplace · Buea</div></div>
+  </a>
+  <nav class="topbar-nav"><a href="index.html" class="active">Home</a><a href="products.html">Products</a><a href="sell.html">Sell Item</a><a href="dashboard.html">Dashboard</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav>
+  <div id="nav-user-desktop"></div>
+  <button class="nav-toggle" onclick="toggleMobileNav()">&#9776;</button>
+</header>
+<div class="nav-overlay" id="nav-overlay" onclick="closeMobileNav()"></div>
+<div class="mobile-nav-panel" id="mobile-nav-panel">
+  <div class="mnp-head">
+    <span class="brand">&#127891; Chitechma Marketplace</span>
+    <button class="mnp-close" onclick="closeMobileNav()">&#10005;</button>
+  </div>
+  <div class="mnp-links"><a href="index.html" class="active">Home</a><a href="products.html">Products</a><a href="sell.html">Sell Item</a><a href="dashboard.html">Dashboard</a><a href="about.html">About</a><a href="contact.html">Contact</a></div>
+  <div id="nav-user-mobile"></div>
+</div>
+<div class="hero">
+  <h1>The Chitechma Student Marketplace</h1>
+  <p>Buy and sell items with fellow Chitechma students. Textbooks, electronics, clothing and more &mdash; all in one place.</p>
+  <div class="hero-btns">
+    <a href="login.html" class="btn btn-white">&#128273; Login to Dashboard</a>
+    <a href="products.html" class="btn btn-outline">&#128717; Browse Products</a>
+  </div>
+</div>
 
-    <div class="page-wrap">
-      <p class="section-label" style="margin-bottom: 18px">How it works</p>
-      <div class="features-strip" style="margin-bottom: 44px">
-        <div class="feature-card">
-          <div class="feature-icon">&#128273;</div>
-          <h3>1. Login</h3>
-          <p>
-            Use your registered email and password to access your personal
-            dashboard.
-          </p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">&#128717;</div>
-          <h3>2. Browse</h3>
-          <p>
-            Filter products by category, condition or price to find exactly what
-            you need.
-          </p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">&#128230;</div>
-          <h3>3. Sell</h3>
-          <p>
-            Fill a simple form, upload a photo and your item goes live for all
-            students to see.
-          </p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">&#129309;</div>
-          <h3>4. Deal</h3>
-          <p>
-            Contact the seller via phone or WhatsApp and meet on campus to
-            complete the deal.
-          </p>
-        </div>
-      </div>
+<div class="page-wrap">
+  <p class="section-label" style="margin-bottom:18px;">How it works</p>
+  <div class="features-strip" style="margin-bottom:44px;">
+    <div class="feature-card"><div class="feature-icon">&#128273;</div><h3>1. Login</h3><p>Use your registered email and password to access your personal dashboard.</p></div>
+    <div class="feature-card"><div class="feature-icon">&#128717;</div><h3>2. Browse</h3><p>Filter products by category, condition or price to find exactly what you need.</p></div>
+    <div class="feature-card"><div class="feature-icon">&#128230;</div><h3>3. Sell</h3><p>Fill a simple form, upload a photo and your item goes live for all students to see.</p></div>
+    <div class="feature-card"><div class="feature-icon">&#129309;</div><h3>4. Deal</h3><p>Contact the seller via phone or WhatsApp and meet on campus to complete the deal.</p></div>
+  </div>
 
-      <p class="section-label">Featured products</p>
-      <div
-        id="featured"
-        class="products-grid"
-        style="margin-bottom: 32px"
-      ></div>
-      <div style="text-align: center">
-        <a href="products.html" class="btn btn-primary"
-          >See all products &rarr;</a
-        >
-      </div>
-    </div>
-    <footer>
-      <p class="footer-brand">Chitechma University Institute</p>
-      <p>Student Marketplace &mdash; Buea, Cameroon</p>
-      <p style="margin-top: 8px">
-        <a href="about.html">About</a> &nbsp;&bull;&nbsp;
-        <a href="contact.html">Contact</a>
-      </p>
-    </footer>
-    <script src="js/app.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        var p = DB.getApproved();
-        var g = document.getElementById("featured");
-        if (!p.length) {
-          g.innerHTML =
-            '<div class="empty"><div class="empty-icon">&#128235;</div><p>No products yet. <a href="sell.html">Be the first to sell!</a></p></div>';
-          return;
-        }
-        g.innerHTML = p.slice(-4).reverse().map(buildCard).join("");
-      });
-    </script>
-  </body>
-</html>
+  <p class="section-label">Featured products</p>
+  <div id="featured" class="products-grid" style="margin-bottom:32px;"></div>
+  <div style="text-align:center;">
+    <a href="products.html" class="btn btn-primary">See all products &rarr;</a>
+  </div>
+</div>
+<footer>
+  <p class="footer-brand">Chitechma University Institute</p>
+  <p>Student Marketplace &mdash; Buea, Cameroon</p>
+  <p style="margin-top:8px;"><a href="about.html">About</a> &nbsp;&bull;&nbsp; <a href="contact.html">Contact</a></p>
+</footer>
+<script src="js/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  var p = DB.getApproved();
+  var g = document.getElementById("featured");
+  if(!p.length){ g.innerHTML = '<div class="empty"><div class="empty-icon">&#128235;</div><p>No products yet. <a href="sell.html">Be the first to sell!</a></p></div>'; return; }
+  g.innerHTML = p.slice(-4).reverse().map(buildCard).join("");
+});
+</script>
+</body></html>
